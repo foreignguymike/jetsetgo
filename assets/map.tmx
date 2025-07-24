@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="20" tileheight="20" infinite="0" nextlayerid="3" nextobjectid="11">
+ <objectgroup id="2" name="Object Layer 1">
+  <object id="1" x="1100" y="960">
+   <ellipse/>
+  </object>
+  <object id="2" x="1120" y="940">
+   <ellipse/>
+  </object>
+  <object id="3" x="1140" y="920">
+   <ellipse/>
+  </object>
+  <object id="4" x="1160" y="900">
+   <ellipse/>
+  </object>
+  <object id="5" x="1200" y="880">
+   <ellipse/>
+  </object>
+  <object id="6" x="1220" y="880">
+   <ellipse/>
+  </object>
+  <object id="7" x="1240" y="880">
+   <ellipse/>
+  </object>
+  <object id="8" x="1260" y="860">
+   <ellipse/>
+  </object>
+  <object id="9" x="1280" y="840">
+   <ellipse/>
+  </object>
+  <object id="10" x="1300" y="820">
+   <ellipse/>
+  </object>
+ </objectgroup>
+</map>

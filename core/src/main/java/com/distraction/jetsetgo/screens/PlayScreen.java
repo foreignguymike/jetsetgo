@@ -2,14 +2,20 @@ package com.distraction.jetsetgo.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
 import com.distraction.jetsetgo.Constants;
 import com.distraction.jetsetgo.Context;
 import com.distraction.jetsetgo.Utils;
+import com.distraction.jetsetgo.entity.Button;
 import com.distraction.jetsetgo.entity.Collectible;
 import com.distraction.jetsetgo.entity.Particle;
 import com.distraction.jetsetgo.entity.Player;
+import com.distraction.jetsetgo.entity.TextEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +31,26 @@ public class PlayScreen extends Screen {
     private final int mapHeight = 2000;
 
     private float timer = 30;
+    private int timerInt = MathUtils.ceil(timer);
 
     private int score;
 
-    private final BitmapFont font;
-    private final BitmapFont bigFont;
+    private final Button[] perkIcons;
+    private final TextEntity scoreText;
+    private final TextEntity timeText;
 
     public PlayScreen(Context context) {
         super(context);
+
+        perkIcons = new Button[3];
+        perkIcons[0] = new Button(context.getImage(context.ability.getName()), 30, Constants.HEIGHT - 30);
+        perkIcons[1] = new Button(context.getImage(context.passive1.getName()), 80, Constants.HEIGHT - 30);
+        perkIcons[2] = new Button(context.getImage(context.passive2.getName()), 130, Constants.HEIGHT - 30);
+
+        scoreText = new TextEntity(context.getFont(Context.VCR20), "0", Constants.WIDTH - 20, Constants.HEIGHT - 20, TextEntity.Alignment.RIGHT);
+        scoreText.setColor(Color.WHITE);
+        timeText = new TextEntity(context.getFont(Context.VCR20, 2), timerInt + "", Constants.WIDTH / 2f, Constants.HEIGHT - 20, TextEntity.Alignment.CENTER);
+        timeText.setColor(Color.WHITE);
 
         particles = new ArrayList<>();
         collectibles = new ArrayList<>();
@@ -41,16 +59,15 @@ public class PlayScreen extends Screen {
         player.x = mapWidth / 2f;
         player.y = mapHeight / 2f;
 
-        // test collectibles
-        collectibles.add(new Collectible(context, Collectible.Type.WATERMELON, 30, 30));
-        collectibles.add(new Collectible(context, Collectible.Type.WATERMELON, 30, mapHeight - 30));
-        collectibles.add(new Collectible(context, Collectible.Type.WATERMELON, mapWidth, 30));
-        collectibles.add(new Collectible(context, Collectible.Type.WATERMELON, mapWidth - 30, mapHeight - 30));
-
-        font = context.getFont(Context.VCR20);
-        font.setColor(Constants.WHITE);
-        bigFont = context.getFont(Context.VCR20, 2);
-        bigFont.setColor(Constants.WHITE);
+        // parse map
+        TiledMap map = context.getMap();
+        MapLayer layer = map.getLayers().get(0);
+        for (MapObject o : layer.getObjects()) {
+            MapProperties props = o.getProperties();
+            float x = props.get("x", Float.class);
+            float y = props.get("y", Float.class);
+            collectibles.add(new Collectible(context, Collectible.Type.WATERMELON, x, y));
+        }
     }
 
     @Override
@@ -65,6 +82,17 @@ public class PlayScreen extends Screen {
     @Override
     public void update(float dt) {
         timer -= dt;
+        int newTimerInt = MathUtils.ceil(timer);
+        if (timerInt != newTimerInt) { // avoid unnecessary glyph relayout
+            timerInt = newTimerInt;
+            timeText.setText(timerInt + "");
+        }
+
+        if (timer < 0) {
+            context.sm.push(new FinishScreen(context));
+            return;
+        }
+
         if (player.x > mapWidth) player.x -= mapWidth;
         if (player.x < 0) player.x += mapWidth;
         if (player.y > mapHeight) player.y -= mapHeight;
@@ -79,6 +107,7 @@ public class PlayScreen extends Screen {
             Collectible c = collectibles.get(i);
             if (player.intersects(c)) {
                 score += c.getPoints();
+                scoreText.setText(score + "");
                 c.remove = true;
             }
             if (c.remove) collectibles.remove(i--);
@@ -93,15 +122,19 @@ public class PlayScreen extends Screen {
 
     @Override
     public void render() {
+        Utils.clearScreen(Constants.BLUE);
         sb.begin();
-        sb.setProjectionMatrix(uiCam.combined);
-        bigFont.draw(sb, MathUtils.ceil(timer) + "", Constants.WIDTH / 2f, Constants.HEIGHT - 25);
-        font.draw(sb, "score: " + score, 10, Constants.HEIGHT - 10);
-        font.draw(sb, (int) player.x + ", " + (int) player.y, 10, Constants.HEIGHT - 25);
+
         sb.setProjectionMatrix(cam.combined);
         for (Particle p : particles) p.render(sb);
         player.render(sb);
         for (Collectible c : collectibles) c.render(sb);
+
+        sb.setProjectionMatrix(uiCam.combined);
+        for (Button b : perkIcons) b.render(sb);
+        timeText.render(sb);
+        scoreText.render(sb);
+
         sb.end();
     }
 
