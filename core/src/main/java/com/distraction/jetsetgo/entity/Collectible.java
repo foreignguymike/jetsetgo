@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.distraction.jetsetgo.Context;
 import com.distraction.jetsetgo.Utils;
 
-public class Collectable extends Entity {
+public class Collectible extends Entity {
 
     public enum Type {
         WATERMELON("watermelon", 100),
@@ -22,7 +22,7 @@ public class Collectable extends Entity {
     private final Type type;
     private final TextureRegion image;
 
-    public Collectable(Context context, Type type, float x, float y) {
+    public Collectible(Context context, Type type, float x, float y) {
         this.type = type;
         this.image = context.getImage(type.name);
         this.x = x;

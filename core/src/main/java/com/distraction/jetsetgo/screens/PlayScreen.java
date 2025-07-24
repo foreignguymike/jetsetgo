@@ -6,7 +6,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.distraction.jetsetgo.Constants;
 import com.distraction.jetsetgo.Context;
-import com.distraction.jetsetgo.entity.Collectable;
+import com.distraction.jetsetgo.Utils;
+import com.distraction.jetsetgo.entity.Collectible;
 import com.distraction.jetsetgo.entity.Particle;
 import com.distraction.jetsetgo.entity.Player;
 
@@ -18,32 +19,38 @@ public class PlayScreen extends Screen {
     private final Player player;
 
     private final List<Particle> particles;
-    private final List<Collectable> collectables;
+    private final List<Collectible> collectibles;
 
-    private final int mapWidth = 1000;
-    private final int mapHeight = 1000;
+    private final int mapWidth = 2000;
+    private final int mapHeight = 2000;
+
+    private float timer = 30;
 
     private int score;
 
-    private BitmapFont font = new BitmapFont();
+    private final BitmapFont font;
+    private final BitmapFont bigFont;
 
     public PlayScreen(Context context) {
         super(context);
 
         particles = new ArrayList<>();
-        collectables = new ArrayList<>();
+        collectibles = new ArrayList<>();
 
         player = new Player(context, particles);
         player.x = mapWidth / 2f;
         player.y = mapHeight / 2f;
 
-        // test collectables
-        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 30, 30));
-        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 30, 970));
-        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 970, 30));
-        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 970, 970));
+        // test collectibles
+        collectibles.add(new Collectible(context, Collectible.Type.WATERMELON, 30, 30));
+        collectibles.add(new Collectible(context, Collectible.Type.WATERMELON, 30, mapHeight - 30));
+        collectibles.add(new Collectible(context, Collectible.Type.WATERMELON, mapWidth, 30));
+        collectibles.add(new Collectible(context, Collectible.Type.WATERMELON, mapWidth - 30, mapHeight - 30));
 
-
+        font = context.getFont(Context.VCR20);
+        font.setColor(Constants.WHITE);
+        bigFont = context.getFont(Context.VCR20, 2);
+        bigFont.setColor(Constants.WHITE);
     }
 
     @Override
@@ -57,6 +64,7 @@ public class PlayScreen extends Screen {
 
     @Override
     public void update(float dt) {
+        timer -= dt;
         if (player.x > mapWidth) player.x -= mapWidth;
         if (player.x < 0) player.x += mapWidth;
         if (player.y > mapHeight) player.y -= mapHeight;
@@ -67,13 +75,13 @@ public class PlayScreen extends Screen {
 
         player.update(dt);
 
-        for (int i = 0; i < collectables.size(); i++) {
-            Collectable c = collectables.get(i);
+        for (int i = 0; i < collectibles.size(); i++) {
+            Collectible c = collectibles.get(i);
             if (player.intersects(c)) {
                 score += c.getPoints();
                 c.remove = true;
             }
-            if (c.remove) collectables.remove(i--);
+            if (c.remove) collectibles.remove(i--);
         }
 
         for (int i = 0; i < particles.size(); i++) {
@@ -87,12 +95,13 @@ public class PlayScreen extends Screen {
     public void render() {
         sb.begin();
         sb.setProjectionMatrix(uiCam.combined);
+        bigFont.draw(sb, MathUtils.ceil(timer) + "", Constants.WIDTH / 2f, Constants.HEIGHT - 25);
         font.draw(sb, "score: " + score, 10, Constants.HEIGHT - 10);
         font.draw(sb, (int) player.x + ", " + (int) player.y, 10, Constants.HEIGHT - 25);
         sb.setProjectionMatrix(cam.combined);
         for (Particle p : particles) p.render(sb);
         player.render(sb);
-        for (Collectable c : collectables) c.render(sb);
+        for (Collectible c : collectibles) c.render(sb);
         sb.end();
     }
 

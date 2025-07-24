@@ -26,7 +26,6 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        Utils.clearScreen(Constants.BLUE);
         context.sm.input();
         accum += Gdx.graphics.getDeltaTime();
         while (accum > TICK) {
