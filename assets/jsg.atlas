@@ -1,9 +1,11 @@
 jsg.png
-size:64,64
+size:128,64
 repeat:none
 pixel
-bounds:2,2,1,1
+bounds:40,39,1,1
 player
-bounds:2,5,40,19
+bounds:40,42,40,19
+watermelon
+bounds:2,2,23,23
 wave
-bounds:2,26,36,34
+bounds:2,27,36,34
