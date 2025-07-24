@@ -3,6 +3,7 @@ package com.distraction.jetsetgo.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.MathUtils;
 import com.distraction.jetsetgo.Constants;
 import com.distraction.jetsetgo.Context;
 import com.distraction.jetsetgo.entity.Collectable;
@@ -19,6 +20,9 @@ public class PlayScreen extends Screen {
     private final List<Particle> particles;
     private final List<Collectable> collectables;
 
+    private final int mapWidth = 1000;
+    private final int mapHeight = 1000;
+
     private int score;
 
     private BitmapFont font = new BitmapFont();
@@ -30,13 +34,16 @@ public class PlayScreen extends Screen {
         collectables = new ArrayList<>();
 
         player = new Player(context, particles);
-        player.x = 100;
-        player.y = 100;
+        player.x = mapWidth / 2f;
+        player.y = mapHeight / 2f;
 
         // test collectables
-        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 300, 300));
-        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 340, 340));
-        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 380, 380));
+        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 30, 30));
+        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 30, 970));
+        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 970, 30));
+        collectables.add(new Collectable(context, Collectable.Type.WATERMELON, 970, 970));
+
+
     }
 
     @Override
@@ -50,7 +57,12 @@ public class PlayScreen extends Screen {
 
     @Override
     public void update(float dt) {
-        cam.position.set(player.x, player.y, 0);
+        if (player.x > mapWidth) player.x -= mapWidth;
+        if (player.x < 0) player.x += mapWidth;
+        if (player.y > mapHeight) player.y -= mapHeight;
+        if (player.y < 0) player.y += mapHeight;
+        cam.position.x = MathUtils.clamp(player.x, cam.viewportWidth / 2f, mapWidth - cam.viewportWidth / 2f);
+        cam.position.y = MathUtils.clamp(player.y, cam.viewportHeight / 2f, mapHeight - cam.viewportHeight / 2f);
         cam.update();
 
         player.update(dt);
