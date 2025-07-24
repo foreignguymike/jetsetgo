@@ -12,15 +12,23 @@ import com.distraction.jetsetgo.entity.PerkSelector;
 
 public class PerkSelectorScreen extends Screen {
 
+    public enum Type {
+        ABILITY,
+        PASSIVE1,
+        PASSIVE2
+    }
+
     private final TextureRegion horizontal;
     private final TextureRegion vertical;
 
     private float dim;
 
+    private final Type type;
     private final PerkSelector[] selectors;
 
-    public PerkSelectorScreen(Context context, Perk[] perks) {
+    public PerkSelectorScreen(Context context, Type type, Perk[] perks) {
         super(context);
+        this.type = type;
 
         horizontal = context.getImage("framehorizontal");
         vertical = context.getImage("framevertical");
@@ -40,7 +48,9 @@ public class PerkSelectorScreen extends Screen {
         System.out.println(menuHeight + ", " + top + ", " + spacing);
         for (int i = 0; i < selectors.length; i++) {
             Perk p = perks[i];
-            selectors[i] = new PerkSelector(context, p, p.getTitle(), p.getDescription(), 180, top - i * spacing - spacing / 2f);
+            PerkSelector ps = new PerkSelector(context, p, p.getTitle(), p.getDescription(), 180, top - i * spacing - spacing / 2f);
+            ps.selected = p == context.ability || p == context.passive1 || p == context.passive2;
+            selectors[i] = ps;
         }
     }
 
@@ -50,7 +60,18 @@ public class PerkSelectorScreen extends Screen {
 
         unproject();
         for (PerkSelector p : selectors) {
-            p.highlighted = p.contains(m.x, m.y);
+            p.highlighted = !p.selected && p.contains(m.x, m.y);
+        }
+        if (Gdx.input.justTouched()) {
+            for (PerkSelector p : selectors) {
+                if (!p.selected && p.contains(m.x, m.y)) {
+                    if (type == Type.ABILITY) context.ability = p.perk;
+                    else if (type == Type.PASSIVE1) context.passive1 = p.perk;
+                    else if (type == Type.PASSIVE2) context.passive2 = p.perk;
+                    ignoreInput = true;
+                    out.start();
+                }
+            }
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {

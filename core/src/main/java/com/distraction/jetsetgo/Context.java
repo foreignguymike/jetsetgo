@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.distraction.jetsetgo.screens.PerkScreen;
-import com.distraction.jetsetgo.screens.PlayScreen;
 import com.distraction.jetsetgo.screens.ScreenManager;
 
 public class Context {
@@ -20,9 +19,9 @@ public class Context {
     public ScreenManager sm;
     public SpriteBatch sb;
 
-    public Ability ability = null;
-    public Passive passive1 = null;
-    public Passive passive2 = null;
+    public Perk ability = null;
+    public Perk passive1 = null;
+    public Perk passive2 = null;
 
     public Context() {
         assets = new AssetManager();

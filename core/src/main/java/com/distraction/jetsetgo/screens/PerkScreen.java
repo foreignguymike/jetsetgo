@@ -5,7 +5,6 @@ import com.distraction.jetsetgo.Ability;
 import com.distraction.jetsetgo.Constants;
 import com.distraction.jetsetgo.Context;
 import com.distraction.jetsetgo.Passive;
-import com.distraction.jetsetgo.Perk;
 import com.distraction.jetsetgo.Utils;
 import com.distraction.jetsetgo.entity.Button;
 import com.distraction.jetsetgo.entity.TextEntity;
@@ -59,11 +58,11 @@ public class PerkScreen extends Screen {
         if (Gdx.input.justTouched()) {
             unproject();
             if (abilityIcon.contains(m.x, m.y, 5, 5)) {
-                context.sm.push(new PerkSelectorScreen(context, Ability.values()));
+                context.sm.push(new PerkSelectorScreen(context, PerkSelectorScreen.Type.ABILITY, Ability.values()));
             } else if (passive1Icon.contains(m.x, m.y, 5, 5)) {
-                context.sm.push(new PerkSelectorScreen(context, Passive.values()));
+                context.sm.push(new PerkSelectorScreen(context, PerkSelectorScreen.Type.PASSIVE1, Passive.values()));
             } else if (passive2Icon.contains(m.x, m.y, 5, 5)) {
-                context.sm.push(new PerkSelectorScreen(context, Passive.values()));
+                context.sm.push(new PerkSelectorScreen(context, PerkSelectorScreen.Type.PASSIVE2, Passive.values()));
             }
         }
     }
