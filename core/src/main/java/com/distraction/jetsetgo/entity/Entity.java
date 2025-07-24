@@ -9,6 +9,8 @@ public abstract class Entity {
     public float w, h;
     public float dx, dy;
 
+    public float rad;
+
     public float a = 1;
     public boolean visible = true;
     public boolean remove = false;

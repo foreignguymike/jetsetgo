@@ -1,5 +1,9 @@
 jsg.png
-size:16,16
+size:64,64
 repeat:none
 pixel
 bounds:2,2,1,1
+player
+bounds:2,5,40,19
+wave
+bounds:2,26,36,34

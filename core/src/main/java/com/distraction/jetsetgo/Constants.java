@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.Color;
 public class Constants {
 
     public static final String TITLE = "Jet Set Go!";
-    public static final int WIDTH = 240;
-    public static final int HEIGHT = 240;
-    public static final int SCALE = 4;
+    public static final int WIDTH = 640;
+    public static final int HEIGHT = 380;
+    public static final int SCALE = 2;
     public static final int SWIDTH = WIDTH * SCALE;
     public static final int SHEIGHT = HEIGHT * SCALE;
 
@@ -38,4 +38,5 @@ public class Constants {
     };
 
     public static final Color BLACK = COLORS[0];
+    public static final Color BLUE = COLORS[12];
 }
