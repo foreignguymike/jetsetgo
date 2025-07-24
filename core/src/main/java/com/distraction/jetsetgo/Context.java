@@ -20,6 +20,10 @@ public class Context {
     public ScreenManager sm;
     public SpriteBatch sb;
 
+    public Ability ability = null;
+    public Passive passive1 = null;
+    public Passive passive2 = null;
+
     public Context() {
         assets = new AssetManager();
         assets.load(VCR20, BitmapFont.class);

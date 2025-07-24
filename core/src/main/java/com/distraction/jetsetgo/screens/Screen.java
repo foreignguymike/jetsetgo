@@ -1,8 +1,11 @@
 package com.distraction.jetsetgo.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.distraction.jetsetgo.Constants;
 import com.distraction.jetsetgo.Context;
 
@@ -16,6 +19,7 @@ public abstract class Screen {
 
     protected OrthographicCamera cam;
     protected OrthographicCamera uiCam;
+    protected final Vector3 m;
 
     protected SpriteBatch sb;
 
@@ -35,6 +39,40 @@ public abstract class Screen {
 
         uiCam = new OrthographicCamera();
         uiCam.setToOrtho(false, Constants.WIDTH, Constants.HEIGHT);
+
+        m = new Vector3();
+    }
+
+    protected void setPanTransition(Vector2 start, Vector2 end, OrthographicCamera cam) {
+        ignoreInput = true;
+        in = new Transition(
+            context,
+            Transition.Type.PAN, cam,
+            start,
+            end,
+            0.2f,
+            () -> ignoreInput = false
+        );
+        in.start();
+        out = new Transition(
+            context,
+            Transition.Type.PAN, cam,
+            end,
+            start,
+            0.2f,
+            () -> {
+                context.sm.pop();
+                context.sm.peek().ignoreInput = false;
+            }
+        );
+        cam.position.x = start.x;
+        cam.position.y = start.y;
+        cam.update();
+    }
+
+    protected void unproject() {
+        m.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        uiCam.unproject(m);
     }
 
     public void resume() {}

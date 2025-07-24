@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Align;
 
 import java.util.Objects;
 
-public class FontEntity extends Entity {
+public class TextEntity extends Entity {
 
     public enum Alignment {
         LEFT,
@@ -24,12 +24,12 @@ public class FontEntity extends Entity {
     private String currentText = "";
     private Color color = Color.WHITE;
 
-    public FontEntity(BitmapFont font, String text, float x, float y, Alignment alignment) {
+    public TextEntity(BitmapFont font, String text, float x, float y, Alignment alignment) {
         this(font, text, x, y);
         this.alignment = alignment;
     }
 
-    public FontEntity(BitmapFont font, String text, float x, float y) {
+    public TextEntity(BitmapFont font, String text, float x, float y) {
         this.font = font;
         glyphLayout = new GlyphLayout();
         setText(text);
