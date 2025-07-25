@@ -74,11 +74,13 @@ public class PerkSelectorScreen extends Screen {
                     else if (type == Type.PASSIVE2) context.passive2 = p.perk;
                     ignoreInput = true;
                     out.start();
+                    context.audio.playSound("select");
                 }
             }
             if (in.isFinished() && !out.started() && backButton.contains(m.x, m.y)) {
                 ignoreInput = true;
                 out.start();
+                context.audio.playSound("pluck");
             }
         }
 

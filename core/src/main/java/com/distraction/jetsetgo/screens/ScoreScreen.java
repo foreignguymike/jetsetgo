@@ -69,6 +69,7 @@ public class ScoreScreen extends Screen {
             if (in.isFinished() && !out.started() && backButton.contains(m.x, m.y)) {
                 ignoreInput = true;
                 out.start();
+                context.audio.playSound("pluck");
             }
         }
 

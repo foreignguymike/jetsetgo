@@ -57,6 +57,7 @@ public class FinishScreen extends Screen {
         if (context.data.submitted) return;
         if (loading) return;
         loading = true;
+        context.audio.playSound("click");
         context.submitScore(context.data.name, context.data.score, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
@@ -66,6 +67,7 @@ public class FinishScreen extends Screen {
                 if (res.contains("true")) {
                     context.data.submitted = true;
                     context.fetchLeaderboard(success -> {});
+                    context.audio.playSound("submit");
                 } else {
                     failed(null);
                 }
@@ -101,15 +103,18 @@ public class FinishScreen extends Screen {
                     context.sm.replace(new PlayScreen(context));
                 });
                 out.start();
+                context.audio.playSound("click");
             }
             if (backButton.contains(m.x, m.y, 2, 2)) {
                 ignoreInput = true;
                 out.setCallback(() -> context.sm.replace(new PerkScreen(context)));
                 out.start();
+                context.audio.playSound("pluck");
             }
             if (scoresButton.contains(m.x, m.y, 2, 2)) {
                 ignoreInput = true;
                 context.sm.push(new ScoreScreen(context));
+                context.audio.playSound("click");
             }
         }
     }
@@ -155,8 +160,10 @@ public class FinishScreen extends Screen {
             }
         }
         scoreText.render(sb);
-        backButton.render(sb);
-        restartButton.render(sb);
+        if (in.isFinished() && !out.started()) {
+            backButton.render(sb);
+            restartButton.render(sb);
+        }
         scoresButton.render(sb);
 
         sb.end();

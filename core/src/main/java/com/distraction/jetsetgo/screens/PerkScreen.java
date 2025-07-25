@@ -1,6 +1,7 @@
 package com.distraction.jetsetgo.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.distraction.jetsetgo.Ability;
 import com.distraction.jetsetgo.Constants;
 import com.distraction.jetsetgo.Context;
@@ -21,6 +22,9 @@ public class PerkScreen extends Screen {
 
     private final Button backButton;
     private final Button goButton;
+
+    private final TextEntity helpText;
+    private float helpTimer;
 
     public PerkScreen(Context context) {
         super(context);
@@ -45,6 +49,8 @@ public class PerkScreen extends Screen {
 
         backButton = new Button(context.getImage("back"), 30, Constants.HEIGHT - 30);
         goButton = new Button(context.getImage("go"), Constants.WIDTH / 2f, 50);
+
+        helpText = new TextEntity(context.getFont(Context.M5X716), "Click ->", abilityIcon.x - 30, abilityIcon.y, TextEntity.Alignment.RIGHT);
     }
 
     private void updateIcons() {
@@ -69,19 +75,24 @@ public class PerkScreen extends Screen {
             unproject();
             if (abilityIcon.contains(m.x, m.y, 5, 5)) {
                 context.sm.push(new PerkSelectorScreen(context, PerkSelectorScreen.Type.ABILITY, Ability.values()));
+                context.audio.playSound("click");
             } else if (passive1Icon.contains(m.x, m.y, 5, 5)) {
                 context.sm.push(new PerkSelectorScreen(context, PerkSelectorScreen.Type.PASSIVE1, Passive.values()));
+                context.audio.playSound("click");
             } else if (passive2Icon.contains(m.x, m.y, 5, 5)) {
                 context.sm.push(new PerkSelectorScreen(context, PerkSelectorScreen.Type.PASSIVE2, Passive.values()));
+                context.audio.playSound("click");
             } else if (context.perksSet() && goButton.contains(m.x, m.y, 5, 5)) {
                 ignoreInput = true;
                 out.setCallback(() -> context.sm.replace(new PlayScreen(context)));
                 out.start();
+                context.audio.playSound("click");
             }
             if (backButton.contains(m.x, m.y)) {
                 ignoreInput = true;
                 out = new Transition(context, Transition.Type.FLASH_OUT, 0.5f, () -> context.sm.replace(new TitleScreen(context)));
                 out.start();
+                context.audio.playSound("pluck");
             }
         }
     }
@@ -90,6 +101,10 @@ public class PerkScreen extends Screen {
     public void update(float dt) {
         in.update(dt);
         out.update(dt);
+        if (context.ability == null) {
+            helpTimer += dt;
+            helpText.x = abilityIcon.x - 30 + 3 * MathUtils.sin(helpTimer * 6);
+        }
     }
 
     @Override
@@ -105,9 +120,9 @@ public class PerkScreen extends Screen {
         passive1Icon.render(sb);
         passive2Icon.render(sb);
         backButton.render(sb);
-        if (context.perksSet()) {
-            goButton.render(sb);
-        }
+        goButton.a = context.perksSet() ? 1f : 0.3f;
+        goButton.render(sb);
+        if (context.ability == null) helpText.render(sb);
 
         in.render(sb);
         out.render(sb);

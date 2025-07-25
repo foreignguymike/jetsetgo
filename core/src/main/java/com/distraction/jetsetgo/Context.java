@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.distraction.jetsetgo.audio.AudioHandler;
 import com.distraction.jetsetgo.gj.GameJoltClient;
 import com.distraction.jetsetgo.screens.ScreenManager;
 
@@ -28,6 +29,7 @@ public class Context {
     private static final int MINIMUM_SCORE = 3000;
 
     public AssetManager assets;
+    public AudioHandler audio;
 
     public ScreenManager sm;
     public SpriteBatch sb;
@@ -53,6 +55,9 @@ public class Context {
         assets.finishLoading();
 
         sb = new SpriteBatch();
+
+        audio = new AudioHandler();
+
 //        sm = new ScreenManager(new com.distraction.jetsetgo.screens.PlayScreen(this));
 //        sm = new ScreenManager(new com.distraction.jetsetgo.screens.PerkScreen(this));
         sm = new ScreenManager(new com.distraction.jetsetgo.screens.NameScreen(this));

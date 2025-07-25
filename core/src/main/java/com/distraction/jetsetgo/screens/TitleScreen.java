@@ -57,15 +57,18 @@ public class TitleScreen extends Screen {
                 ignoreInput = true;
                 out = new Transition(context, Transition.Type.FLASH_OUT, 0.5f, () -> context.sm.replace(new NameScreen(context)));
                 out.start();
+                context.audio.playSound("pluck");
             }
             if (playButton.contains(m.x, m.y, 2, 2)) {
                 ignoreInput = true;
                 out.setCallback(() -> context.sm.replace(new PerkScreen(context)));
                 out.start();
+                context.audio.playSound("click");
             }
             if (scoresButton.contains(m.x, m.y, 2, 2)) {
                 ignoreInput = true;
                 context.sm.push(new ScoreScreen(context));
+                context.audio.playSound("click");
             }
         }
     }

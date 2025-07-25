@@ -120,8 +120,11 @@ public class PlayScreen extends Screen {
         passives.add(context.passive2);
         if (passives.contains(Passive.SPEEDO_MODE)) player.maxSpeedMulti = 1.5f;
         if (passives.contains(Passive.SURF_STEERING)) player.steerSpeedMulti = 3;
-        if (passives.contains(Passive.SUMMER_HOURS)) timer = 37;
         if (passives.contains(Passive.CHAIN_REACTION)) comboTimerMax = 3;
+        if (passives.contains(Passive.SUMMER_HOURS)) {
+            timer = 37;
+            timeText.setText("37");
+        }
 
         // parse map
         TiledMap map = context.getMap();
@@ -141,6 +144,7 @@ public class PlayScreen extends Screen {
     }
 
     private void collect(Collectible c) {
+        context.audio.playSoundCut("collect", 0.5f);
         int points = MathUtils.ceil(c.getPoints() * (1 + combo * 0.05f));
         if (abilityTimer > 0 && context.ability == Ability.DOUBLE_DIP) points *= 2;
         score += points;
@@ -157,6 +161,7 @@ public class PlayScreen extends Screen {
     private void useAbility() {
         if (!abilityUsed) {
             abilityUsed = true;
+            context.audio.playSound("ability", 0.5f);
             if (context.ability == Ability.WHIRLPOOL) {
                 Entity camBounds = new Entity();
                 camBounds.x = cam.position.x;
@@ -186,12 +191,14 @@ public class PlayScreen extends Screen {
         ignoreInput = true;
         out.setCallback(() -> context.sm.replace(new PlayScreen(context)));
         out.start();
+        context.audio.playSound("click");
     }
 
     private void back() {
         ignoreInput = true;
         out.setCallback(() -> context.sm.replace(new PerkScreen(context)));
         out.start();
+        context.audio.playSound("click");
     }
 
     @Override
@@ -234,16 +241,17 @@ public class PlayScreen extends Screen {
             countdownTimer -= dt;
             player.update(dt);
 
-            if (previousCountdownTimer > 3.3f && countdownTimer < 3.3f) {
-                countdowns[1].start();
-            } else if (previousCountdownTimer > 2.3f && countdownTimer < 2.3f) {
-                countdowns[2].start();
-            } else if (previousCountdownTimer > 1.3f && countdownTimer < 1.3f) {
-                countdowns[3].start();
-            } else if (previousCountdownTimer > 0.3f && countdownTimer < 0.3f) {
-                countdowns[4].start();
-            } else if (countdownTimer < 0) {
+            if (previousCountdownTimer > 3.3f && countdownTimer < 3.3f) countdowns[1].start();
+            else if (previousCountdownTimer > 2.3f && countdownTimer < 2.3f) countdowns[2].start();
+            else if (previousCountdownTimer > 1.3f && countdownTimer < 1.3f) countdowns[3].start();
+            else if (previousCountdownTimer > 0.3f && countdownTimer < 0.3f) countdowns[4].start();
+
+            if (previousCountdownTimer > 3f && countdownTimer < 3f) context.audio.playSound("countdownlow");
+            if (previousCountdownTimer > 2f && countdownTimer < 2f) context.audio.playSound("countdownlow");
+            if (previousCountdownTimer > 1f && countdownTimer < 1f) context.audio.playSound("countdownlow");
+            if (countdownTimer < 0) {
                 state = State.GO;
+                context.audio.playSound("countdownhigh");
             }
             return;
         }
@@ -258,6 +266,7 @@ public class PlayScreen extends Screen {
         if (timer < 0) {
             context.data.score = score;
             context.sm.push(new FinishScreen(context));
+            context.audio.playSound("stop", 0.5f);
             return;
         }
 
