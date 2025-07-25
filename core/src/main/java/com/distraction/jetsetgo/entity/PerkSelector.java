@@ -10,8 +10,6 @@ import com.distraction.jetsetgo.Utils;
 
 public class PerkSelector extends Entity {
 
-    private final Context context;
-
     private final TextureRegion pixel;
 
     public final Perk perk;
@@ -25,7 +23,6 @@ public class PerkSelector extends Entity {
     public boolean selected;
 
     public PerkSelector(Context context, Perk perk, float x, float y) {
-        this.context = context;
         pixel = context.getPixel();
 
         this.perk = perk;

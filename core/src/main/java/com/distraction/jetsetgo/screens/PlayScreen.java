@@ -43,6 +43,8 @@ public class PlayScreen extends Screen {
     private final Button[] perkIcons;
     private final TextEntity scoreText;
     private final TextEntity timeText;
+    private final Button backButton;
+    private final Button restartButton;
 
     private int maxCombo = 10;
     private int combo;
@@ -76,6 +78,9 @@ public class PlayScreen extends Screen {
         comboText = new TextEntity(context.getFont(Context.M5X716, 2), score + "", Constants.WIDTH / 2f, Constants.HEIGHT / 2f + 30, TextEntity.Alignment.CENTER);
         comboText.setColor(Constants.WHITE);
         comboTimerMax = 1;
+
+        backButton = new Button(context.getImage("back"), 30, Constants.HEIGHT - 30);
+        restartButton = new Button(context.getImage("restart"), 80, Constants.HEIGHT - 30);
 
         particles = new ArrayList<>();
         collectibles = new ArrayList<>();
@@ -153,6 +158,18 @@ public class PlayScreen extends Screen {
         }
     }
 
+    private void restart() {
+        ignoreInput = true;
+        out.setCallback(() -> context.sm.replace(new PlayScreen(context)));
+        out.start();
+    }
+
+    private void back() {
+        ignoreInput = true;
+        out.setCallback(() -> context.sm.replace(new PerkScreen(context)));
+        out.start();
+    }
+
     @Override
     public void input() {
         if (ignoreInput) return;
@@ -162,8 +179,22 @@ public class PlayScreen extends Screen {
         player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A);
         player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D);
 
-        if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             useAbility();
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            restart();
+        }
+
+        if (Gdx.input.justTouched()) {
+            unproject();
+            if (restartButton.contains(m.x, m.y, 2, 2)) {
+                restart();
+            }
+            if (backButton.contains(m.x, m.y, 2, 2)) {
+                back();
+            }
         }
     }
 
@@ -232,10 +263,11 @@ public class PlayScreen extends Screen {
         for (Collectible c : collectibles) c.render(sb);
 
         sb.setProjectionMatrix(uiCam.combined);
-        for (Button b : perkIcons) b.render(sb);
         timeText.render(sb);
         scoreText.render(sb);
         comboText.render(sb);
+        backButton.render(sb);
+        restartButton.render(sb);
         // combo bar
         if (comboTimer > 0) {
             sb.setColor(Constants.DARK_GREEN);

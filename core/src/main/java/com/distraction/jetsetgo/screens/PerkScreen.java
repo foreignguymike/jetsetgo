@@ -15,11 +15,12 @@ public class PerkScreen extends Screen {
     private final TextEntity abilityText;
     private final TextEntity passiveText;
 
-    private Button abilityIcon;
-    private Button passive1Icon;
-    private Button passive2Icon;
+    private final Button abilityIcon;
+    private final Button passive1Icon;
+    private final Button passive2Icon;
 
-    private Button goButton;
+    private final Button backButton;
+    private final Button goButton;
 
     public PerkScreen(Context context) {
         super(context);
@@ -42,6 +43,7 @@ public class PerkScreen extends Screen {
         passive2Icon = new Button(context.getImage("perk"), Constants.WIDTH / 2f + 50, Constants.HEIGHT - 240);
         updateIcons();
 
+        backButton = new Button(context.getImage("back"), 30, Constants.HEIGHT - 30);
         goButton = new Button(context.getImage("go"), Constants.WIDTH / 2f, 50);
     }
 
@@ -76,6 +78,11 @@ public class PerkScreen extends Screen {
                 out.setCallback(() -> context.sm.replace(new PlayScreen(context)));
                 out.start();
             }
+            if (backButton.contains(m.x, m.y)) {
+                ignoreInput = true;
+                out = new Transition(context, Transition.Type.FLASH_OUT, 0.5f, () -> context.sm.replace(new TitleScreen(context)));
+                out.start();
+            }
         }
     }
 
@@ -87,7 +94,7 @@ public class PerkScreen extends Screen {
 
     @Override
     public void render() {
-        Utils.clearScreen(Constants.PURPLE);
+        Utils.clearScreen(Constants.DARK_BLUE);
         sb.begin();
         sb.setProjectionMatrix(uiCam.combined);
         titleText.render(sb);
@@ -97,6 +104,7 @@ public class PerkScreen extends Screen {
         abilityIcon.render(sb);
         passive1Icon.render(sb);
         passive2Icon.render(sb);
+        backButton.render(sb);
         if (context.perksSet()) {
             goButton.render(sb);
         }

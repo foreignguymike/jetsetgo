@@ -203,7 +203,7 @@ public class NameScreen extends Screen {
         sb.begin();
         sb.setProjectionMatrix(uiCam.combined);
 
-        sb.setColor(Constants.BLACK);
+        sb.setColor(Constants.PURPLE);
         sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
 
         sb.setColor(Color.WHITE);

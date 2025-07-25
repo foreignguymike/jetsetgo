@@ -8,6 +8,7 @@ import com.distraction.jetsetgo.Constants;
 import com.distraction.jetsetgo.Context;
 import com.distraction.jetsetgo.Perk;
 import com.distraction.jetsetgo.Utils;
+import com.distraction.jetsetgo.entity.Button;
 import com.distraction.jetsetgo.entity.PerkSelector;
 
 public class PerkSelectorScreen extends Screen {
@@ -23,6 +24,7 @@ public class PerkSelectorScreen extends Screen {
 
     private float dim;
 
+    private final Button backButton;
     private final Type type;
     private final PerkSelector[] selectors;
 
@@ -52,6 +54,8 @@ public class PerkSelectorScreen extends Screen {
             ps.selected = p == context.ability || p == context.passive1 || p == context.passive2;
             selectors[i] = ps;
         }
+
+        backButton = new Button(context.getImage("back"), 30, Constants.HEIGHT - 30);
     }
 
     @Override
@@ -71,6 +75,10 @@ public class PerkSelectorScreen extends Screen {
                     ignoreInput = true;
                     out.start();
                 }
+            }
+            if (in.isFinished() && !out.started() && backButton.contains(m.x, m.y)) {
+                ignoreInput = true;
+                out.start();
             }
         }
 
@@ -120,14 +128,12 @@ public class PerkSelectorScreen extends Screen {
         Utils.drawCentered(sb, horizontal, Constants.WIDTH / 2f, Constants.HEIGHT / 2f + vertical.getRegionHeight() / 2f - 7);
         Utils.drawCentered(sb, horizontal, Constants.WIDTH / 2f, Constants.HEIGHT / 2f - vertical.getRegionHeight() / 2f + 7);
 
-//        sb.draw(bg, 0, 0);
-
-//        sb.setProjectionMatrix(uiCam.combined);
-//        if (in.isFinished() && !out.started()) backButton.render(sb);
-
         for (PerkSelector p : selectors) {
             p.render(sb);
         }
+
+        sb.setProjectionMatrix(uiCam.combined);
+        if (in.isFinished() && !out.started()) backButton.render(sb);
 
         sb.end();
     }
