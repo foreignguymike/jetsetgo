@@ -138,7 +138,6 @@ public class PlayScreen extends Screen {
                 collectibles.add(new Collectible(context, entry.getValue(), x, y));
             }
         }
-        System.out.println("total items loaded: " + collectibles.size());
     }
 
     private void collect(Collectible c) {
@@ -176,7 +175,7 @@ public class PlayScreen extends Screen {
                 abilityTimer = 5f;
                 if (combo < 10) {
                     combo = 10;
-                    comboText.setText("");
+                    comboText.setText(combo + "x");
                 }
                 comboTimer = comboTimerMax + 5;
             }
@@ -204,7 +203,7 @@ public class PlayScreen extends Screen {
         player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A);
         player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (state == State.GO && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             useAbility();
         }
 
@@ -265,7 +264,7 @@ public class PlayScreen extends Screen {
         comboTimer -= dt;
         if (comboTimer < 0) {
             combo = 0;
-            comboText.setText(combo + "x");
+            comboText.setText("");
         }
 
         abilityTimer -= dt;

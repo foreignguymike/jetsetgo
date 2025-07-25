@@ -24,6 +24,7 @@ public class FinishScreen extends Screen {
 
     private final Button backButton;
     private final Button restartButton;
+    private final Button scoresButton;
 
     private float timer;
 
@@ -43,8 +44,9 @@ public class FinishScreen extends Screen {
         titleText = new TextEntity(context.getFont(Context.VCR20, 3f), newHighscore ? "NEW HIGHSCORE!" : "Try again", Constants.WIDTH / 2f, Constants.HEIGHT / 2f + 70, TextEntity.Alignment.CENTER);
         titleText.setColor(Constants.WHITE);
 
-        submitButton = new Button(context.getImage("submit"), Constants.WIDTH / 2f, 70);
+        submitButton = new Button(context.getImage("submit"), Constants.WIDTH / 2f, 80);
         submitText = new TextEntity(context.getFont(Context.M5X716, 2f), "Submitted!", Constants.WIDTH / 2f, 70, TextEntity.Alignment.CENTER);
+        scoresButton = new Button(context.getImage("scores"), Constants.WIDTH / 2f, 40);
 
         backButton = new Button(context.getImage("back"), 30, Constants.HEIGHT - 30);
         restartButton = new Button(context.getImage("restart"), 80, Constants.HEIGHT - 30);
@@ -105,6 +107,10 @@ public class FinishScreen extends Screen {
                 out.setCallback(() -> context.sm.replace(new PerkScreen(context)));
                 out.start();
             }
+            if (scoresButton.contains(m.x, m.y, 2, 2)) {
+                ignoreInput = true;
+                context.sm.push(new ScoreScreen(context));
+            }
         }
     }
 
@@ -151,6 +157,7 @@ public class FinishScreen extends Screen {
         scoreText.render(sb);
         backButton.render(sb);
         restartButton.render(sb);
+        scoresButton.render(sb);
 
         sb.end();
     }

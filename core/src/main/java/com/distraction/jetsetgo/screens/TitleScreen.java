@@ -63,6 +63,10 @@ public class TitleScreen extends Screen {
                 out.setCallback(() -> context.sm.replace(new PerkScreen(context)));
                 out.start();
             }
+            if (scoresButton.contains(m.x, m.y, 2, 2)) {
+                ignoreInput = true;
+                context.sm.push(new ScoreScreen(context));
+            }
         }
     }
 
