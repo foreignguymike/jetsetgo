@@ -19,13 +19,13 @@ public class PerkScreen extends Screen {
     private Button passive1Icon;
     private Button passive2Icon;
 
-    private Button playButton;
+    private Button goButton;
 
     public PerkScreen(Context context) {
         super(context);
 
         ignoreInput = true;
-        in = new Transition(context, Transition.Type.FLASH_IN, 0.5f, () -> ignoreInput = false);
+        in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
         in.start();
         out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> context.sm.replace(new PlayScreen(context)));
 
@@ -42,7 +42,7 @@ public class PerkScreen extends Screen {
         passive2Icon = new Button(context.getImage("perk"), Constants.WIDTH / 2f + 50, Constants.HEIGHT - 240);
         updateIcons();
 
-        playButton = new Button(context.getImage("playbutton"), Constants.WIDTH / 2f, 50);
+        goButton = new Button(context.getImage("go"), Constants.WIDTH / 2f, 50);
     }
 
     private void updateIcons() {
@@ -71,7 +71,7 @@ public class PerkScreen extends Screen {
                 context.sm.push(new PerkSelectorScreen(context, PerkSelectorScreen.Type.PASSIVE1, Passive.values()));
             } else if (passive2Icon.contains(m.x, m.y, 5, 5)) {
                 context.sm.push(new PerkSelectorScreen(context, PerkSelectorScreen.Type.PASSIVE2, Passive.values()));
-            } else if (context.perksSet() && playButton.contains(m.x, m.y, 5, 5)) {
+            } else if (context.perksSet() && goButton.contains(m.x, m.y, 5, 5)) {
                 ignoreInput = true;
                 out.setCallback(() -> context.sm.replace(new PlayScreen(context)));
                 out.start();
@@ -98,7 +98,7 @@ public class PerkScreen extends Screen {
         passive1Icon.render(sb);
         passive2Icon.render(sb);
         if (context.perksSet()) {
-            playButton.render(sb);
+            goButton.render(sb);
         }
 
         in.render(sb);

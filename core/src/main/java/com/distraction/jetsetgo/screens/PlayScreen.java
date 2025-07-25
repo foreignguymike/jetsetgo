@@ -31,7 +31,6 @@ public class PlayScreen extends Screen {
 
     private final List<Particle> particles;
     private final List<Collectible> collectibles;
-    private final List<Collectible> magnetCollectibles;
 
     private final int mapWidth = 2000;
     private final int mapHeight = 2000;
@@ -80,7 +79,6 @@ public class PlayScreen extends Screen {
 
         particles = new ArrayList<>();
         collectibles = new ArrayList<>();
-        magnetCollectibles = new ArrayList<>();
 
         player = new Player(context, particles);
         player.x = mapWidth / 2f;
@@ -140,7 +138,6 @@ public class PlayScreen extends Screen {
                     Collectible c = collectibles.get(i);
                     if (camBounds.contains(c.x, c.y)) {
                         c.setPlayer(player);
-                        magnetCollectibles.add(c);
                     }
                 }
             } else if (context.ability == Ability.DOUBLE_DIP) {
@@ -150,8 +147,8 @@ public class PlayScreen extends Screen {
                 if (combo < 10) {
                     combo = 10;
                     comboText.setText(combo + "x");
-                    comboTimer = comboTimerMax + 5;
                 }
+                comboTimer = comboTimerMax + 5;
             }
         }
     }
@@ -206,20 +203,14 @@ public class PlayScreen extends Screen {
 
         for (int i = 0; i < collectibles.size(); i++) {
             Collectible c = collectibles.get(i);
+            c.update(dt);
             if (passives.contains(Passive.MAIN_ATTRACTION) && c.contains(player.x, player.y, 40, 40)) {
                 c.setPlayer(player);
-                magnetCollectibles.add(c);
             }
             if (player.intersects(c)) {
                 collect(c);
             }
             if (c.remove) collectibles.remove(i--);
-        }
-
-        for (int i = 0; i < magnetCollectibles.size(); i++) {
-            Collectible c = magnetCollectibles.get(i);
-            c.update(dt);
-            if (c.remove) magnetCollectibles.remove(i--);
         }
 
         for (int i = 0; i < particles.size(); i++) {

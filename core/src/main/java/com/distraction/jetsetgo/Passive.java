@@ -5,7 +5,7 @@ public enum Passive implements Perk {
     CHAIN_REACTION, // combo timer is 4 seconds instead of 2
     SPEEDO_MODE, // +50% max speed
     SURF_STEERING, // +200% turn speed
-    SUMMER_HOURS, // +5 seconds
+    SUMMER_HOURS, // +7 seconds
     ;
 
     @Override

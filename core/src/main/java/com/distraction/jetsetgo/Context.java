@@ -22,6 +22,8 @@ public class Context {
     public ScreenManager sm;
     public SpriteBatch sb;
 
+    public PlayerData data = new PlayerData();
+
     public Perk ability = null;
     public Perk passive1 = null;
     public Perk passive2 = null;
@@ -37,7 +39,8 @@ public class Context {
 
         sb = new SpriteBatch();
 //        sm = new ScreenManager(new com.distraction.jetsetgo.screens.PlayScreen(this));
-        sm = new ScreenManager(new com.distraction.jetsetgo.screens.PerkScreen(this));
+//        sm = new ScreenManager(new com.distraction.jetsetgo.screens.PerkScreen(this));
+        sm = new ScreenManager(new com.distraction.jetsetgo.screens.NameScreen(this));
     }
 
     public boolean perksSet() {

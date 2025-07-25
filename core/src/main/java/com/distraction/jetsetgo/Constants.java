@@ -38,6 +38,7 @@ public class Constants {
     };
 
     public static final Color BLACK = COLORS[0];
+    public static final Color DARK_BLUE = COLORS[1];
     public static final Color DARK_GREEN = COLORS[3];
     public static final Color WHITE = COLORS[7];
     public static final Color GREEN = COLORS[11];
