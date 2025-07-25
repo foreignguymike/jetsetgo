@@ -21,7 +21,7 @@ public class Collectible extends Entity {
         }
     }
 
-    private static final float SPEED = 400;
+    private static final float SPEED = 600;
 
     private final Type type;
     private final TextureRegion image;
@@ -48,10 +48,13 @@ public class Collectible extends Entity {
     @Override
     public void update(float dt) {
         if (player != null) {
-            if (player.x < x) x -= SPEED * dt;
-            else if (player.x > x) x += SPEED * dt;
-            if (player.y < y) y -= SPEED * dt;
-            else if (player.y > y) y += SPEED * dt;
+            dx = player.x - x;
+            dy = player.y - y;
+            float dist = (float) Math.sqrt(dx * dx + dy * dy);
+            dx *= SPEED / dist;
+            dy *= SPEED / dist;
+            x += dx * dt;
+            y += dy * dt;
         }
     }
 

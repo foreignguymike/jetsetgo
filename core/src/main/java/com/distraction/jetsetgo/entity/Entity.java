@@ -2,7 +2,7 @@ package com.distraction.jetsetgo.entity;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public abstract class Entity {
+public class Entity {
 
     // position, size, speed
     public float x, y;

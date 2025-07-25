@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
+import com.distraction.jetsetgo.Ability;
 import com.distraction.jetsetgo.Constants;
 import com.distraction.jetsetgo.Context;
 import com.distraction.jetsetgo.Passive;
@@ -14,6 +15,7 @@ import com.distraction.jetsetgo.Perk;
 import com.distraction.jetsetgo.Utils;
 import com.distraction.jetsetgo.entity.Button;
 import com.distraction.jetsetgo.entity.Collectible;
+import com.distraction.jetsetgo.entity.Entity;
 import com.distraction.jetsetgo.entity.Particle;
 import com.distraction.jetsetgo.entity.Player;
 import com.distraction.jetsetgo.entity.TextEntity;
@@ -43,12 +45,16 @@ public class PlayScreen extends Screen {
     private final TextEntity scoreText;
     private final TextEntity timeText;
 
+    private int maxCombo = 10;
     private int combo;
     private float comboTimer;
     private float comboTimerMax;
     private TextEntity comboText;
 
     private List<Perk> passives;
+
+    private boolean abilityUsed;
+    private float abilityTimer;
 
     public PlayScreen(Context context) {
         super(context);
@@ -108,7 +114,9 @@ public class PlayScreen extends Screen {
     }
 
     private void collect(Collectible c) {
-        score += MathUtils.ceil(c.getPoints() * (1 + combo * 0.05f));
+        int points = MathUtils.ceil(c.getPoints() * (1 + combo * 0.05f));
+        if (abilityTimer > 0 && context.ability == Ability.DOUBLE_DIP) points *= 2;
+        score += points;
         scoreText.setText(score + "");
         c.remove = true;
 
@@ -116,16 +124,50 @@ public class PlayScreen extends Screen {
             combo += 1;
             comboText.setText(combo + "x");
         }
-        comboTimer = comboTimerMax;
+        if (comboTimer < comboTimerMax) comboTimer = comboTimerMax;
+    }
+
+    private void useAbility() {
+        if (!abilityUsed) {
+            abilityUsed = true;
+            if (context.ability == Ability.WHIRLPOOL) {
+                Entity camBounds = new Entity();
+                camBounds.x = cam.position.x;
+                camBounds.y = cam.position.y;
+                camBounds.w = Constants.WIDTH;
+                camBounds.h = Constants.HEIGHT;
+                for (int i = 0; i < collectibles.size(); i++) {
+                    Collectible c = collectibles.get(i);
+                    if (camBounds.contains(c.x, c.y)) {
+                        c.setPlayer(player);
+                        magnetCollectibles.add(c);
+                    }
+                }
+            } else if (context.ability == Ability.DOUBLE_DIP) {
+                abilityTimer = 5f;
+            } else if (context.ability == Ability.HEAT_WAVE) {
+                abilityTimer = 5f;
+                if (combo < 10) {
+                    combo = 10;
+                    comboText.setText(combo + "x");
+                    comboTimer = comboTimerMax + 5;
+                }
+            }
+        }
     }
 
     @Override
     public void input() {
         if (ignoreInput) return;
-        player.up = Gdx.input.isKeyPressed(Input.Keys.UP);
-        player.down = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-        player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+
+        player.up = Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W);
+        player.down = Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S);
+        player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A);
+        player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D);
+
+        if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            useAbility();
+        }
     }
 
     @Override
@@ -149,6 +191,8 @@ public class PlayScreen extends Screen {
             combo = 0;
             comboText.setText(combo + "x");
         }
+
+        abilityTimer -= dt;
 
         if (player.x > mapWidth) player.x -= mapWidth;
         if (player.x < 0) player.x += mapWidth;
@@ -206,7 +250,7 @@ public class PlayScreen extends Screen {
             sb.setColor(Constants.DARK_GREEN);
             sb.draw(pixel, Constants.WIDTH / 2f - 25, Constants.HEIGHT / 2f + 20, 50, 2);
             sb.setColor(Constants.GREEN);
-            sb.draw(pixel, Constants.WIDTH / 2f - 25, Constants.HEIGHT / 2f + 20, 50 * comboTimer / comboTimerMax, 2);
+            sb.draw(pixel, Constants.WIDTH / 2f - 25, Constants.HEIGHT / 2f + 20, Math.min(50 * comboTimer / comboTimerMax, 50), 2);
         }
 
         in.render(sb);

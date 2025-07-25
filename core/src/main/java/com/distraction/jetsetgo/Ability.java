@@ -24,12 +24,11 @@ public enum Ability implements Perk {
     public String getDescription() {
         if (this == WHIRLPOOL) return "Pulls in all collectibles on the screen.";
         else if (this == DOUBLE_DIP) return "Collectibles give 2x points for 5 seconds.";
-        else return "2x combo increase for 5 seconds.";
+        else return "Max combo for 5 seconds.";
     }
 
     @Override
     public String getDescription2() {
-        if (this == WHIRLPOOL) return "Does not increase combo.";
-        else return null;
+        return null;
     }
 }
