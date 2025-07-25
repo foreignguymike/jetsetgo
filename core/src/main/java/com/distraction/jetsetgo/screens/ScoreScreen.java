@@ -102,8 +102,15 @@ public class ScoreScreen extends Screen {
         sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
 
         sb.setProjectionMatrix(cam.combined);
-        sb.setColor(Constants.BLACK);
+        sb.setColor(Constants.DARK_BLUE);
         sb.draw(pixel, 180, 0, (Constants.WIDTH - 180 * 2), Constants.HEIGHT);
+        sb.setColor(Constants.PURPLE);
+        for (int i = 0; i < scoreTexts.length; i++) {
+            if (i % 2 == 0) continue;
+            TextEntity[] row = scoreTexts[i];
+            float y = row[0].y;
+            sb.draw(pixel, 180, y + 9, (Constants.WIDTH - 180 * 2), 15);
+        }
 
         titleText.render(sb);
         for (TextEntity[] scoreText : scoreTexts) {

@@ -51,22 +51,23 @@ public class PlayScreen extends Screen {
 
     private int score;
 
-    private final Button[] perkIcons;
     private final TextEntity scoreText;
     private final TextEntity timeText;
     private final Button backButton;
     private final Button restartButton;
 
-    private int maxCombo = 10;
+    private final int maxCombo = 10;
     private int combo;
     private float comboTimer;
     private float comboTimerMax;
-    private TextEntity comboText;
+    private final TextEntity comboText;
 
-    private List<Perk> passives;
+    private final List<Perk> passives;
 
     private boolean abilityUsed;
     private float abilityTimer;
+    private final float abilityTimerMax = 5;
+    private final TextEntity abilityText;
 
     public PlayScreen(Context context) {
         super(context);
@@ -77,11 +78,6 @@ public class PlayScreen extends Screen {
         in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
         in.start();
         out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> context.sm.replace(new PlayScreen(context)));
-
-        perkIcons = new Button[3];
-        perkIcons[0] = new Button(context.getImage(context.ability.getName()), 30, Constants.HEIGHT - 30);
-        perkIcons[1] = new Button(context.getImage(context.passive1.getName()), 80, Constants.HEIGHT - 30);
-        perkIcons[2] = new Button(context.getImage(context.passive2.getName()), 130, Constants.HEIGHT - 30);
 
         scoreText = new TextEntity(context.getFont(Context.VCR20), "0", Constants.WIDTH - 20, Constants.HEIGHT - 30, TextEntity.Alignment.RIGHT);
         scoreText.setColor(Constants.WHITE);
@@ -113,6 +109,8 @@ public class PlayScreen extends Screen {
         cam.position.x = MathUtils.clamp(player.x, cam.viewportWidth / 2f, mapWidth - cam.viewportWidth / 2f);
         cam.position.y = MathUtils.clamp(player.y, cam.viewportHeight / 2f, mapHeight - cam.viewportHeight / 2f);
         cam.update();
+
+        abilityText = new TextEntity(context.getFont(Context.M5X716), context.ability.getName(), Constants.WIDTH / 2f, 20, TextEntity.Alignment.CENTER);
 
         // check perks
         passives = new ArrayList<>();
@@ -327,10 +325,21 @@ public class PlayScreen extends Screen {
         for (Countdown cd : countdowns) cd.render(sb);
         // combo bar
         if (comboTimer > 0) {
+            sb.setColor(Constants.BLACK);
+            sb.draw(pixel, Constants.WIDTH / 2f - 26, Constants.HEIGHT / 2f + 19, 52, 4);
             sb.setColor(Constants.DARK_GREEN);
             sb.draw(pixel, Constants.WIDTH / 2f - 25, Constants.HEIGHT / 2f + 20, 50, 2);
             sb.setColor(Constants.GREEN);
             sb.draw(pixel, Constants.WIDTH / 2f - 25, Constants.HEIGHT / 2f + 20, Math.min(50 * comboTimer / comboTimerMax, 50), 2);
+        }
+
+        // ability bar
+        if (abilityTimer > 0) {
+            sb.setColor(Constants.BLACK);
+            sb.draw(pixel, Constants.WIDTH / 2f - 102, abilityText.y - 7, 204, 16);
+            sb.setColor(Constants.PURPLE);
+            sb.draw(pixel, Constants.WIDTH / 2f - 100, abilityText.y - 5, Math.max(200 * abilityTimer / abilityTimerMax, 0), 12);
+            abilityText.render(sb);
         }
 
         in.render(sb);
