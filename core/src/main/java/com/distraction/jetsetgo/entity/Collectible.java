@@ -21,8 +21,12 @@ public class Collectible extends Entity {
         }
     }
 
+    private static final float SPEED = 400;
+
     private final Type type;
     private final TextureRegion image;
+
+    private Player player;
 
     public Collectible(Context context, Type type, float x, float y) {
         this.type = type;
@@ -35,6 +39,20 @@ public class Collectible extends Entity {
 
     public int getPoints() {
         return type.points;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    @Override
+    public void update(float dt) {
+        if (player != null) {
+            if (player.x < x) x -= SPEED * dt;
+            else if (player.x > x) x += SPEED * dt;
+            if (player.y < y) y -= SPEED * dt;
+            else if (player.y > y) y += SPEED * dt;
+        }
     }
 
     @Override

@@ -22,9 +22,9 @@ public class Context {
     public ScreenManager sm;
     public SpriteBatch sb;
 
-    public Perk ability = Ability.WHIRLPOOL;
-    public Perk passive1 = Passive.MAIN_ATTRACTION;
-    public Perk passive2 = Passive.SPEEDO_MODE;
+    public Perk ability = null;
+    public Perk passive1 = null;
+    public Perk passive2 = null;
 
     public Context() {
         assets = new AssetManager();
@@ -36,8 +36,12 @@ public class Context {
         assets.finishLoading();
 
         sb = new SpriteBatch();
-        sm = new ScreenManager(new com.distraction.jetsetgo.screens.PlayScreen(this));
-//        sm = new ScreenManager(new com.distraction.jetsetgo.screens.PerkScreen(this));
+//        sm = new ScreenManager(new com.distraction.jetsetgo.screens.PlayScreen(this));
+        sm = new ScreenManager(new com.distraction.jetsetgo.screens.PerkScreen(this));
+    }
+
+    public boolean perksSet() {
+        return ability != null && passive1 != null && passive2 != null;
     }
 
     public TiledMap getMap() {

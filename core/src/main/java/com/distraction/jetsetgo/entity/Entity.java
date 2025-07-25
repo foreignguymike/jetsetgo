@@ -19,9 +19,6 @@ public abstract class Entity {
         return contains(x, y, 0, 0);
     }
 
-    /**
-     * Contains with padding.
-     */
     public boolean contains(float x, float y, float px, float py) {
         return x > this.x - w / 2 - px
             && x < this.x + w / 2 + px
@@ -30,11 +27,16 @@ public abstract class Entity {
     }
 
     public boolean intersects(Entity o) {
-        return x - w / 2 < o.x + o.w / 2 && x + w / 2 > o.x - o.w / 2
-            && y - h / 2 < o.y + o.h / 2 && y + h / 2 > o.y - o.h / 2;
+        return x - w / 2 < o.x + o.w / 2
+            && x + w / 2 > o.x - o.w / 2
+            && y - h / 2 < o.y + o.h / 2
+            && y + h / 2 > o.y - o.h / 2;
     }
 
-    public void update(float dt) {}
-    public void render(SpriteBatch sb) {}
+    public void update(float dt) {
+    }
+
+    public void render(SpriteBatch sb) {
+    }
 
 }

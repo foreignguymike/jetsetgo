@@ -14,6 +14,8 @@ public class Transition {
     public enum Type {
         CHECKERED_IN,
         CHECKERED_OUT,
+        FLASH_IN,
+        FLASH_OUT,
         PAN
     }
 
@@ -116,6 +118,12 @@ public class Transition {
                     sb.draw(pixel, squareSize * 0.5f + squareSize * col - size / 2, squareSize * 0.5f + squareSize * row - size / 2, size, size);
                 }
             }
+        } else if (type == Type.FLASH_IN) {
+            sb.setColor(1, 1, 1, 1f - (time / duration));
+            sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
+        } else if (type == Type.FLASH_OUT) {
+            sb.setColor(1, 1, 1, time / duration);
+            sb.draw(pixel, 0, 0, Constants.WIDTH, Constants.HEIGHT);
         }
     }
 

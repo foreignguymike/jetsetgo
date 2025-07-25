@@ -19,22 +19,30 @@ public class PerkScreen extends Screen {
     private Button passive1Icon;
     private Button passive2Icon;
 
+    private Button playButton;
+
     public PerkScreen(Context context) {
         super(context);
+
+        ignoreInput = true;
+        in = new Transition(context, Transition.Type.FLASH_IN, 0.5f, () -> ignoreInput = false);
+        in.start();
+        out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> context.sm.replace(new PlayScreen(context)));
 
         titleText = new TextEntity(context.getFont(Context.VCR20, 2), "PERKS", Constants.WIDTH / 2f, Constants.HEIGHT - 40, TextEntity.Alignment.CENTER);
         titleText.setColor(Constants.WHITE);
 
-        abilityText = new TextEntity(context.getFont(Context.VCR20), "Choose 1 ability", Constants.WIDTH / 2f, Constants.HEIGHT - 110, TextEntity.Alignment.CENTER);
+        abilityText = new TextEntity(context.getFont(Context.VCR20), "Choose 1 ability", Constants.WIDTH / 2f, Constants.HEIGHT - 100, TextEntity.Alignment.CENTER);
         titleText.setColor(Constants.WHITE);
+        abilityIcon = new Button(context.getImage("perk"), Constants.WIDTH / 2f, Constants.HEIGHT - 140);
 
-        passiveText = new TextEntity(context.getFont(Context.VCR20), "Choose 2 passives", Constants.WIDTH / 2f, Constants.HEIGHT - 230, TextEntity.Alignment.CENTER);
+        passiveText = new TextEntity(context.getFont(Context.VCR20), "Choose 2 passives", Constants.WIDTH / 2f, Constants.HEIGHT - 200, TextEntity.Alignment.CENTER);
         titleText.setColor(Constants.WHITE);
-
-        abilityIcon = new Button(context.getImage("perk"), Constants.WIDTH / 2f, Constants.HEIGHT - 160);
-        passive1Icon = new Button(context.getImage("perk"), Constants.WIDTH / 2f - 50, Constants.HEIGHT - 280);
-        passive2Icon = new Button(context.getImage("perk"), Constants.WIDTH / 2f + 50, Constants.HEIGHT - 280);
+        passive1Icon = new Button(context.getImage("perk"), Constants.WIDTH / 2f - 50, Constants.HEIGHT - 240);
+        passive2Icon = new Button(context.getImage("perk"), Constants.WIDTH / 2f + 50, Constants.HEIGHT - 240);
         updateIcons();
+
+        playButton = new Button(context.getImage("playbutton"), Constants.WIDTH / 2f, 50);
     }
 
     private void updateIcons() {
@@ -63,13 +71,18 @@ public class PerkScreen extends Screen {
                 context.sm.push(new PerkSelectorScreen(context, PerkSelectorScreen.Type.PASSIVE1, Passive.values()));
             } else if (passive2Icon.contains(m.x, m.y, 5, 5)) {
                 context.sm.push(new PerkSelectorScreen(context, PerkSelectorScreen.Type.PASSIVE2, Passive.values()));
+            } else if (context.perksSet() && playButton.contains(m.x, m.y, 5, 5)) {
+                ignoreInput = true;
+                out.setCallback(() -> context.sm.replace(new PlayScreen(context)));
+                out.start();
             }
         }
     }
 
     @Override
     public void update(float dt) {
-
+        in.update(dt);
+        out.update(dt);
     }
 
     @Override
@@ -84,6 +97,12 @@ public class PerkScreen extends Screen {
         abilityIcon.render(sb);
         passive1Icon.render(sb);
         passive2Icon.render(sb);
+        if (context.perksSet()) {
+            playButton.render(sb);
+        }
+
+        in.render(sb);
+        out.render(sb);
         sb.end();
 
     }

@@ -26,4 +26,10 @@ public enum Ability implements Perk {
         else if (this == DOUBLE_DIP) return "Collectibles give 2x points for 5 seconds.";
         else return "2x combo increase for 5 seconds.";
     }
+
+    @Override
+    public String getDescription2() {
+        if (this == WHIRLPOOL) return "Does not increase combo.";
+        else return null;
+    }
 }

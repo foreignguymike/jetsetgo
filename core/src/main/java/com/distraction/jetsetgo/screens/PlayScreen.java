@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
 import com.distraction.jetsetgo.Constants;
 import com.distraction.jetsetgo.Context;
+import com.distraction.jetsetgo.Passive;
+import com.distraction.jetsetgo.Perk;
 import com.distraction.jetsetgo.Utils;
 import com.distraction.jetsetgo.entity.Button;
 import com.distraction.jetsetgo.entity.Collectible;
@@ -27,6 +29,7 @@ public class PlayScreen extends Screen {
 
     private final List<Particle> particles;
     private final List<Collectible> collectibles;
+    private final List<Collectible> magnetCollectibles;
 
     private final int mapWidth = 2000;
     private final int mapHeight = 2000;
@@ -42,11 +45,18 @@ public class PlayScreen extends Screen {
 
     private int combo;
     private float comboTimer;
-    private float comboTimeMax;
+    private float comboTimerMax;
     private TextEntity comboText;
+
+    private List<Perk> passives;
 
     public PlayScreen(Context context) {
         super(context);
+
+        ignoreInput = true;
+        in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
+        in.start();
+        out = new Transition(context, Transition.Type.CHECKERED_OUT, 0.5f, () -> context.sm.replace(new PlayScreen(context)));
 
         perkIcons = new Button[3];
         perkIcons[0] = new Button(context.getImage(context.ability.getName()), 30, Constants.HEIGHT - 30);
@@ -60,14 +70,24 @@ public class PlayScreen extends Screen {
 
         comboText = new TextEntity(context.getFont(Context.M5X716, 2), score + "", Constants.WIDTH / 2f, Constants.HEIGHT / 2f + 30, TextEntity.Alignment.CENTER);
         comboText.setColor(Constants.WHITE);
-        comboTimeMax = 2;
+        comboTimerMax = 1;
 
         particles = new ArrayList<>();
         collectibles = new ArrayList<>();
+        magnetCollectibles = new ArrayList<>();
 
         player = new Player(context, particles);
         player.x = mapWidth / 2f;
         player.y = mapHeight / 2f;
+
+        // check perks
+        passives = new ArrayList<>();
+        passives.add(context.passive1);
+        passives.add(context.passive2);
+        if (passives.contains(Passive.SPEEDO_MODE)) player.maxSpeedMulti = 1.5f;
+        if (passives.contains(Passive.SURF_STEERING)) player.steerSpeedMulti = 3;
+        if (passives.contains(Passive.SUMMER_HOURS)) timer = 37;
+        if (passives.contains(Passive.CHAIN_REACTION)) comboTimerMax = 3;
 
         // parse map
         TiledMap map = context.getMap();
@@ -84,6 +104,7 @@ public class PlayScreen extends Screen {
                 collectibles.add(new Collectible(context, entry.getValue(), x, y));
             }
         }
+        System.out.println("total items loaded: " + collectibles.size());
     }
 
     private void collect(Collectible c) {
@@ -95,7 +116,7 @@ public class PlayScreen extends Screen {
             combo += 1;
             comboText.setText(combo + "x");
         }
-        comboTimer = 2;
+        comboTimer = comboTimerMax;
     }
 
     @Override
@@ -109,6 +130,8 @@ public class PlayScreen extends Screen {
 
     @Override
     public void update(float dt) {
+        in.update(dt);
+        out.update(dt);
         timer -= dt;
         int newTimerInt = MathUtils.ceil(timer);
         if (timerInt != newTimerInt) { // avoid unnecessary glyph relayout
@@ -139,10 +162,20 @@ public class PlayScreen extends Screen {
 
         for (int i = 0; i < collectibles.size(); i++) {
             Collectible c = collectibles.get(i);
+            if (passives.contains(Passive.MAIN_ATTRACTION) && c.contains(player.x, player.y, 40, 40)) {
+                c.setPlayer(player);
+                magnetCollectibles.add(c);
+            }
             if (player.intersects(c)) {
                 collect(c);
             }
             if (c.remove) collectibles.remove(i--);
+        }
+
+        for (int i = 0; i < magnetCollectibles.size(); i++) {
+            Collectible c = magnetCollectibles.get(i);
+            c.update(dt);
+            if (c.remove) magnetCollectibles.remove(i--);
         }
 
         for (int i = 0; i < particles.size(); i++) {
@@ -173,8 +206,11 @@ public class PlayScreen extends Screen {
             sb.setColor(Constants.DARK_GREEN);
             sb.draw(pixel, Constants.WIDTH / 2f - 25, Constants.HEIGHT / 2f + 20, 50, 2);
             sb.setColor(Constants.GREEN);
-            sb.draw(pixel, Constants.WIDTH / 2f - 25, Constants.HEIGHT / 2f + 20, 50 * comboTimer / comboTimeMax, 2);
+            sb.draw(pixel, Constants.WIDTH / 2f - 25, Constants.HEIGHT / 2f + 20, 50 * comboTimer / comboTimerMax, 2);
         }
+
+        in.render(sb);
+        out.render(sb);
 
         sb.end();
     }

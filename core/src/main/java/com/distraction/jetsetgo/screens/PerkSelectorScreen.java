@@ -48,7 +48,7 @@ public class PerkSelectorScreen extends Screen {
         System.out.println(menuHeight + ", " + top + ", " + spacing);
         for (int i = 0; i < selectors.length; i++) {
             Perk p = perks[i];
-            PerkSelector ps = new PerkSelector(context, p, p.getTitle(), p.getDescription(), 180, top - i * spacing - spacing / 2f);
+            PerkSelector ps = new PerkSelector(context, p, 180, top - i * spacing - spacing / 2f);
             ps.selected = p == context.ability || p == context.passive1 || p == context.passive2;
             selectors[i] = ps;
         }

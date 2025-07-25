@@ -4,4 +4,5 @@ public interface Perk {
     String getName();
     String getTitle();
     String getDescription();
+    String getDescription2();
 }

@@ -23,6 +23,9 @@ public class Player extends Entity {
     private final TextureRegion image;
     private final TextureRegion pixel;
 
+    public float maxSpeedMulti = 1f;
+    public float steerSpeedMulti = 1f;
+
     private float speed;
 
     // inputs
@@ -46,8 +49,8 @@ public class Player extends Entity {
 
     @Override
     public void update(float dt) {
-        if (left) rad += STEER_SPEED * dt;
-        if (right) rad -= STEER_SPEED * dt;
+        if (left) rad += STEER_SPEED * steerSpeedMulti * dt;
+        if (right) rad -= STEER_SPEED * steerSpeedMulti * dt;
 
         if (up) {
             speed += ACCEL * dt;
@@ -57,7 +60,7 @@ public class Player extends Entity {
             speed -= FRICTION * dt;
         }
 
-        speed = MathUtils.clamp(speed, 0, MAX_SPEED);
+        speed = MathUtils.clamp(speed, 0, MAX_SPEED * maxSpeedMulti);
 
         rad = (rad + MathUtils.PI) % MathUtils.PI2;
         if (rad < 0) rad += MathUtils.PI2;
@@ -78,7 +81,7 @@ public class Player extends Entity {
             p.y = y;
             p.rad = rad - MathUtils.PI;
             particles.add(p);
-            waveTimer = 0.04f - 0.035f * speed / MAX_SPEED;
+            waveTimer = 0.04f - 0.035f * speed / (MAX_SPEED * maxSpeedMulti);
         }
     }
 

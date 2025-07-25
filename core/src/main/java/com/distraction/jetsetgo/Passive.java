@@ -28,10 +28,15 @@ public enum Passive implements Perk {
 
     @Override
     public String getDescription() {
-        if (this == MAIN_ATTRACTION) return "Collectibles are pulled to you within 3 meters.";
-        else if (this == CHAIN_REACTION) return "Combo timer is increased to 4 seconds.";
+        if (this == MAIN_ATTRACTION) return "Nearby collectibles are pulled to you.";
+        else if (this == CHAIN_REACTION) return "Combo timer is increased from 1 to 3 seconds.";
         else if (this == SPEEDO_MODE) return "+50% max speed.";
         else if (this == SURF_STEERING) return "+200% turn speed.";
         else return "+7 seconds to run.";
+    }
+
+    @Override
+    public String getDescription2() {
+        return null;
     }
 }

@@ -3,10 +3,18 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "C:/Users/forei/Documents/jams/30daysofsummer/assets/map.tmx",
     "expandedProjectPaths": [
     ],
     "fileStates": {
+        "C:/Users/forei/Documents/jams/30daysofsummer/assets/map.tmx": {
+            "scale": 0.33,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1419.6969696969697,
+                "y": 1187.8787878787878
+            }
+        }
     },
     "map.height": 100,
     "map.lastUsedFormat": "tmx",
@@ -14,8 +22,10 @@
     "map.tileWidth": 20,
     "map.width": 100,
     "openFiles": [
+        "C:/Users/forei/Documents/jams/30daysofsummer/assets/map.tmx"
     ],
     "project": "map.tiled-project",
     "recentFiles": [
+        "C:/Users/forei/Documents/jams/30daysofsummer/assets/map.tmx"
     ]
 }

@@ -10,6 +10,8 @@ import com.distraction.jetsetgo.Utils;
 
 public class PerkSelector extends Entity {
 
+    private final Context context;
+
     private final TextureRegion pixel;
 
     public final Perk perk;
@@ -17,11 +19,13 @@ public class PerkSelector extends Entity {
 
     private final TextEntity titleText;
     private final TextEntity descriptionText;
+    private TextEntity description2Text = null;
 
     public boolean highlighted;
     public boolean selected;
 
-    public PerkSelector(Context context, Perk perk, String title, String description, float x, float y) {
+    public PerkSelector(Context context, Perk perk, float x, float y) {
+        this.context = context;
         pixel = context.getPixel();
 
         this.perk = perk;
@@ -33,15 +37,22 @@ public class PerkSelector extends Entity {
         BitmapFont font = context.getFont(Context.M5X716);
         font.setColor(Constants.WHITE);
 
-        titleText = new TextEntity(titleFont, title, x + 60, y + 6);
-        descriptionText = new TextEntity(font, description, x + 60, y - 12);
+        titleText = new TextEntity(titleFont, perk.getTitle(), x + 60, y + 6);
+        descriptionText = new TextEntity(font, perk.getDescription(), x + 60, y - 12);
+
+        String description2 = perk.getDescription2();
+        if (description2 != null) {
+            titleText.y += 4;
+            descriptionText.y += 6;
+            description2Text = new TextEntity(font, description2, x + 60, y - 17);
+        }
 
         this.x = x;
         this.y = y;
     }
 
     private float getTextLength() {
-        return Math.max(titleText.w, descriptionText.w);
+        return Math.max(titleText.w, Math.max(descriptionText.w, description2Text != null ? description2Text.w : 0));
     }
 
     @Override
@@ -73,5 +84,6 @@ public class PerkSelector extends Entity {
         Utils.drawCentered(sb, image, x, y);
         titleText.render(sb);
         descriptionText.render(sb);
+        if (description2Text != null) description2Text.render(sb);
     }
 }
