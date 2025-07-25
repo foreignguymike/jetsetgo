@@ -2,7 +2,6 @@ package com.distraction.jetsetgo.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
@@ -41,6 +40,11 @@ public class PlayScreen extends Screen {
     private final TextEntity scoreText;
     private final TextEntity timeText;
 
+    private int combo;
+    private float comboTimer;
+    private float comboTimeMax;
+    private TextEntity comboText;
+
     public PlayScreen(Context context) {
         super(context);
 
@@ -50,9 +54,13 @@ public class PlayScreen extends Screen {
         perkIcons[2] = new Button(context.getImage(context.passive2.getName()), 130, Constants.HEIGHT - 30);
 
         scoreText = new TextEntity(context.getFont(Context.VCR20), "0", Constants.WIDTH - 20, Constants.HEIGHT - 20, TextEntity.Alignment.RIGHT);
-        scoreText.setColor(Color.WHITE);
+        scoreText.setColor(Constants.WHITE);
         timeText = new TextEntity(context.getFont(Context.VCR20, 2), timerInt + "", Constants.WIDTH / 2f, Constants.HEIGHT - 20, TextEntity.Alignment.CENTER);
-        timeText.setColor(Color.WHITE);
+        timeText.setColor(Constants.WHITE);
+
+        comboText = new TextEntity(context.getFont(Context.M5X716, 2), score + "", Constants.WIDTH / 2f, Constants.HEIGHT / 2f + 30, TextEntity.Alignment.CENTER);
+        comboText.setColor(Constants.WHITE);
+        comboTimeMax = 2;
 
         particles = new ArrayList<>();
         collectibles = new ArrayList<>();
@@ -78,6 +86,18 @@ public class PlayScreen extends Screen {
         }
     }
 
+    private void collect(Collectible c) {
+        score += MathUtils.ceil(c.getPoints() * (1 + combo * 0.05f));
+        scoreText.setText(score + "");
+        c.remove = true;
+
+        if (combo < 10) {
+            combo += 1;
+            comboText.setText(combo + "x");
+        }
+        comboTimer = 2;
+    }
+
     @Override
     public void input() {
         if (ignoreInput) return;
@@ -101,6 +121,12 @@ public class PlayScreen extends Screen {
             return;
         }
 
+        comboTimer -= dt;
+        if (comboTimer < 0) {
+            combo = 0;
+            comboText.setText(combo + "x");
+        }
+
         if (player.x > mapWidth) player.x -= mapWidth;
         if (player.x < 0) player.x += mapWidth;
         if (player.y > mapHeight) player.y -= mapHeight;
@@ -114,9 +140,7 @@ public class PlayScreen extends Screen {
         for (int i = 0; i < collectibles.size(); i++) {
             Collectible c = collectibles.get(i);
             if (player.intersects(c)) {
-                score += c.getPoints();
-                scoreText.setText(score + "");
-                c.remove = true;
+                collect(c);
             }
             if (c.remove) collectibles.remove(i--);
         }
@@ -134,6 +158,7 @@ public class PlayScreen extends Screen {
         sb.begin();
 
         sb.setProjectionMatrix(cam.combined);
+        sb.setColor(1, 1, 1, 1);
         for (Particle p : particles) p.render(sb);
         player.render(sb);
         for (Collectible c : collectibles) c.render(sb);
@@ -142,6 +167,14 @@ public class PlayScreen extends Screen {
         for (Button b : perkIcons) b.render(sb);
         timeText.render(sb);
         scoreText.render(sb);
+        comboText.render(sb);
+        // combo bar
+        if (comboTimer > 0) {
+            sb.setColor(Constants.DARK_GREEN);
+            sb.draw(pixel, Constants.WIDTH / 2f - 25, Constants.HEIGHT / 2f + 20, 50, 2);
+            sb.setColor(Constants.GREEN);
+            sb.draw(pixel, Constants.WIDTH / 2f - 25, Constants.HEIGHT / 2f + 20, 50 * comboTimer / comboTimeMax, 2);
+        }
 
         sb.end();
     }
