@@ -18,6 +18,9 @@ public class TitleScreen extends Screen {
     private final Button playButton;
     private final Button scoresButton;
 
+    private final TextEntity errorText;
+    private float errorTextTime;
+
     public TitleScreen(Context context) {
         super(context);
 
@@ -33,6 +36,16 @@ public class TitleScreen extends Screen {
 
         playButton = new Button(context.getImage("play"), Constants.WIDTH / 2f - 80, 80);
         scoresButton = new Button(context.getImage("scores"), Constants.WIDTH / 2f + 80, 80);
+
+        errorText = new TextEntity(context.getFont(Context.M5X716), "", Constants.WIDTH / 2f, 5, TextEntity.Alignment.CENTER);
+        if (!context.leaderboardsInitialized && !context.leaderboardsRequesting) {
+            errorText.setText("Fetching leaderboards...");
+            errorTextTime = 30f;
+            context.fetchLeaderboard((success) -> {
+                errorText.setText(success ? "Leaderboards fetched!" : "Error fetching leaderboards");
+                errorTextTime = 3f;
+            });
+        }
     }
 
     @Override
@@ -57,6 +70,7 @@ public class TitleScreen extends Screen {
     public void update(float dt) {
         in.update(dt);
         out.update(dt);
+        errorTextTime -= dt;
     }
 
     @Override
@@ -75,6 +89,7 @@ public class TitleScreen extends Screen {
 
         playerText.render(sb);
         versionText.render(sb);
+        if (errorTextTime > 0) errorText.render(sb);
 
         playButton.render(sb);
         scoresButton.render(sb);

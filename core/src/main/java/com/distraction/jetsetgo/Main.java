@@ -3,6 +3,7 @@ package com.distraction.jetsetgo;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.distraction.jetsetgo.gj.GameJoltClient;
 
 public class Main extends ApplicationAdapter {
 
@@ -15,6 +16,11 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         context = new Context();
+
+        GameJoltClient client = new GameJoltClient();
+        client.setGjScoreTableMapper(id -> Constants.LEADERBOARD_ID);
+        client.initialize(Constants.APP_ID, Constants.API_KEY);
+        context.client = client;
 
         // for browser, disable arrow navigation
         Gdx.input.setCatchKey(Input.Keys.UP, true);

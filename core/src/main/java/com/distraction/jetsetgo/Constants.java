@@ -44,4 +44,17 @@ public class Constants {
     public static final Color GREEN = COLORS[11];
     public static final Color BLUE = COLORS[12];
     public static final Color PURPLE = COLORS[13];
+
+    public static String APP_ID = "";
+    public static String API_KEY = "";
+    public static int LEADERBOARD_ID = 0;
+
+    // not for you
+    static {
+//        APP_ID = ApiConstants.APP_ID;
+//        API_KEY = ApiConstants.API_KEY;
+//        LEADERBOARD_ID = ApiConstants.LEADERBOARD_ID;
+    }
+
+
 }

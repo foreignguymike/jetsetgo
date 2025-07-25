@@ -15,6 +15,7 @@ import com.distraction.jetsetgo.Perk;
 import com.distraction.jetsetgo.Utils;
 import com.distraction.jetsetgo.entity.Button;
 import com.distraction.jetsetgo.entity.Collectible;
+import com.distraction.jetsetgo.entity.Countdown;
 import com.distraction.jetsetgo.entity.Entity;
 import com.distraction.jetsetgo.entity.Particle;
 import com.distraction.jetsetgo.entity.Player;
@@ -27,6 +28,13 @@ import java.util.Map;
 
 public class PlayScreen extends Screen {
 
+    enum State {
+        COUNTDOWN,
+        GO
+    }
+
+    private State state = State.COUNTDOWN;
+
     private final Player player;
 
     private final List<Particle> particles;
@@ -34,6 +42,9 @@ public class PlayScreen extends Screen {
 
     private final int mapWidth = 2000;
     private final int mapHeight = 2000;
+
+    private float countdownTimer = 5;
+    private final Countdown[] countdowns;
 
     private float timer = 30;
     private int timerInt = MathUtils.ceil(timer);
@@ -60,6 +71,8 @@ public class PlayScreen extends Screen {
     public PlayScreen(Context context) {
         super(context);
 
+        context.data.reset();
+
         ignoreInput = true;
         in = new Transition(context, Transition.Type.CHECKERED_IN, 0.5f, () -> ignoreInput = false);
         in.start();
@@ -70,17 +83,26 @@ public class PlayScreen extends Screen {
         perkIcons[1] = new Button(context.getImage(context.passive1.getName()), 80, Constants.HEIGHT - 30);
         perkIcons[2] = new Button(context.getImage(context.passive2.getName()), 130, Constants.HEIGHT - 30);
 
-        scoreText = new TextEntity(context.getFont(Context.VCR20), "0", Constants.WIDTH - 20, Constants.HEIGHT - 20, TextEntity.Alignment.RIGHT);
+        scoreText = new TextEntity(context.getFont(Context.VCR20), "0", Constants.WIDTH - 20, Constants.HEIGHT - 30, TextEntity.Alignment.RIGHT);
         scoreText.setColor(Constants.WHITE);
-        timeText = new TextEntity(context.getFont(Context.VCR20, 2), timerInt + "", Constants.WIDTH / 2f, Constants.HEIGHT - 20, TextEntity.Alignment.CENTER);
+        timeText = new TextEntity(context.getFont(Context.VCR20, 2), timerInt + "", Constants.WIDTH / 2f, Constants.HEIGHT - 40, TextEntity.Alignment.CENTER);
         timeText.setColor(Constants.WHITE);
 
-        comboText = new TextEntity(context.getFont(Context.M5X716, 2), score + "", Constants.WIDTH / 2f, Constants.HEIGHT / 2f + 30, TextEntity.Alignment.CENTER);
+        comboText = new TextEntity(context.getFont(Context.M5X716, 2), "", Constants.WIDTH / 2f, Constants.HEIGHT / 2f + 30, TextEntity.Alignment.CENTER);
         comboText.setColor(Constants.WHITE);
         comboTimerMax = 1;
 
         backButton = new Button(context.getImage("back"), 30, Constants.HEIGHT - 30);
         restartButton = new Button(context.getImage("restart"), 80, Constants.HEIGHT - 30);
+
+        countdowns = new Countdown[] {
+            new Countdown(context.getImage("countdownready"), Constants.WIDTH / 2f, Constants.HEIGHT / 2f),
+            new Countdown(context.getImage("countdown3"), Constants.WIDTH / 2f, Constants.HEIGHT / 2f),
+            new Countdown(context.getImage("countdown2"), Constants.WIDTH / 2f, Constants.HEIGHT / 2f),
+            new Countdown(context.getImage("countdown1"), Constants.WIDTH / 2f, Constants.HEIGHT / 2f),
+            new Countdown(context.getImage("countdowngo"), Constants.WIDTH / 2f, Constants.HEIGHT / 2f)
+        };
+        countdowns[0].start();
 
         particles = new ArrayList<>();
         collectibles = new ArrayList<>();
@@ -88,6 +110,9 @@ public class PlayScreen extends Screen {
         player = new Player(context, particles);
         player.x = mapWidth / 2f;
         player.y = mapHeight / 2f;
+        cam.position.x = MathUtils.clamp(player.x, cam.viewportWidth / 2f, mapWidth - cam.viewportWidth / 2f);
+        cam.position.y = MathUtils.clamp(player.y, cam.viewportHeight / 2f, mapHeight - cam.viewportHeight / 2f);
+        cam.update();
 
         // check perks
         passives = new ArrayList<>();
@@ -151,7 +176,7 @@ public class PlayScreen extends Screen {
                 abilityTimer = 5f;
                 if (combo < 10) {
                     combo = 10;
-                    comboText.setText(combo + "x");
+                    comboText.setText("");
                 }
                 comboTimer = comboTimerMax + 5;
             }
@@ -174,8 +199,8 @@ public class PlayScreen extends Screen {
     public void input() {
         if (ignoreInput) return;
 
-        player.up = Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W);
-        player.down = Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S);
+        player.up = state == State.GO && (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W));
+        player.down = state == State.GO && (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S));
         player.left = Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A);
         player.right = Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D);
 
@@ -202,6 +227,28 @@ public class PlayScreen extends Screen {
     public void update(float dt) {
         in.update(dt);
         out.update(dt);
+
+        for (Countdown cd : countdowns) cd.update(dt);
+
+        if (state == State.COUNTDOWN) {
+            float previousCountdownTimer = countdownTimer;
+            countdownTimer -= dt;
+            player.update(dt);
+
+            if (previousCountdownTimer > 3.3f && countdownTimer < 3.3f) {
+                countdowns[1].start();
+            } else if (previousCountdownTimer > 2.3f && countdownTimer < 2.3f) {
+                countdowns[2].start();
+            } else if (previousCountdownTimer > 1.3f && countdownTimer < 1.3f) {
+                countdowns[3].start();
+            } else if (previousCountdownTimer > 0.3f && countdownTimer < 0.3f) {
+                countdowns[4].start();
+            } else if (countdownTimer < 0) {
+                state = State.GO;
+            }
+            return;
+        }
+
         timer -= dt;
         int newTimerInt = MathUtils.ceil(timer);
         if (timerInt != newTimerInt) { // avoid unnecessary glyph relayout
@@ -210,6 +257,7 @@ public class PlayScreen extends Screen {
         }
 
         if (timer < 0) {
+            context.data.score = score;
             context.sm.push(new FinishScreen(context));
             return;
         }
@@ -268,6 +316,7 @@ public class PlayScreen extends Screen {
         comboText.render(sb);
         backButton.render(sb);
         restartButton.render(sb);
+        for (Countdown cd : countdowns) cd.render(sb);
         // combo bar
         if (comboTimer > 0) {
             sb.setColor(Constants.DARK_GREEN);
