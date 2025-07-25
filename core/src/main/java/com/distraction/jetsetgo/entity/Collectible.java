@@ -9,6 +9,8 @@ public class Collectible extends Entity {
 
     public enum Type {
         WATERMELON("watermelon", 100),
+        BEACH_BALL("beachball", 150),
+        SUNGLASSES("sunglasses", 200),
         ;
 
         public String name;

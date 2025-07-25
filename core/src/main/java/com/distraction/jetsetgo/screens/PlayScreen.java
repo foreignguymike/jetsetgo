@@ -18,7 +18,9 @@ import com.distraction.jetsetgo.entity.Player;
 import com.distraction.jetsetgo.entity.TextEntity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlayScreen extends Screen {
 
@@ -61,12 +63,18 @@ public class PlayScreen extends Screen {
 
         // parse map
         TiledMap map = context.getMap();
-        MapLayer layer = map.getLayers().get(0);
-        for (MapObject o : layer.getObjects()) {
-            MapProperties props = o.getProperties();
-            float x = props.get("x", Float.class);
-            float y = props.get("y", Float.class);
-            collectibles.add(new Collectible(context, Collectible.Type.WATERMELON, x, y));
+        Map<String, Collectible.Type> typeMapping = new HashMap<>();
+        typeMapping.put("watermelon", Collectible.Type.WATERMELON);
+        typeMapping.put("beachball", Collectible.Type.BEACH_BALL);
+        typeMapping.put("sunglasses", Collectible.Type.SUNGLASSES);
+        for (Map.Entry<String, Collectible.Type> entry : typeMapping.entrySet()) {
+            MapLayer layer = map.getLayers().get(entry.getKey());
+            for (MapObject o : layer.getObjects()) {
+                MapProperties props = o.getProperties();
+                float x = props.get("x", Float.class);
+                float y = props.get("y", Float.class);
+                collectibles.add(new Collectible(context, entry.getValue(), x, y));
+            }
         }
     }
 
