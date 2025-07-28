@@ -51,6 +51,8 @@ public class PerkScreen extends Screen {
         goButton = new Button(context.getImage("go"), Constants.WIDTH / 2f, 50);
 
         helpText = new TextEntity(context.getFont(Context.M5X716), "Click ->", abilityIcon.x - 30, abilityIcon.y, TextEntity.Alignment.RIGHT);
+
+        context.audio.playMusic("bg", 0.3f, true);
     }
 
     private void updateIcons() {

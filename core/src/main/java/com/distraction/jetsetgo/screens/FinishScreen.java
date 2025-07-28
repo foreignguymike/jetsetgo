@@ -50,6 +50,8 @@ public class FinishScreen extends Screen {
 
         backButton = new Button(context.getImage("back"), 30, Constants.HEIGHT - 30);
         restartButton = new Button(context.getImage("restart"), 80, Constants.HEIGHT - 30);
+
+        context.audio.playMusic("bg", 0.1f, true);
     }
 
     private void submit() {

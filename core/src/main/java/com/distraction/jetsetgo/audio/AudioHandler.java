@@ -16,6 +16,7 @@ public class AudioHandler {
 
     public AudioHandler() {
         music = new HashMap<>();
+        addMusic("bg", "music/jetsetgo.ogg");
 
         sounds = new HashMap<>();
         addSound("enter", "sfx/FreeSFX/Retro Event UI 01.wav");
@@ -52,7 +53,7 @@ public class AudioHandler {
             return;
         }
         if (currentlyPlaying != null && newMusic != currentlyPlaying.getMusic()) {
-            stopMusic();
+//            stopMusic();
         }
         currentlyPlaying = new MusicConfig(music.get(key), volume, looping);
         currentlyPlaying.play();

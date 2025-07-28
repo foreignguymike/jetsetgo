@@ -46,6 +46,8 @@ public class TitleScreen extends Screen {
                 errorTextTime = 3f;
             });
         }
+
+        context.audio.stopMusic();
     }
 
     @Override

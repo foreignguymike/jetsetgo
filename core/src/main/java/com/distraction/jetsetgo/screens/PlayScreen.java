@@ -28,6 +28,9 @@ import java.util.Map;
 
 public class PlayScreen extends Screen {
 
+    private static final int MAX_COMBO = 10;
+    private static final float ABILITY_TIMER_MAX = 5;
+
     enum State {
         COUNTDOWN,
         GO
@@ -56,7 +59,6 @@ public class PlayScreen extends Screen {
     private final Button backButton;
     private final Button restartButton;
 
-    private final int maxCombo = 10;
     private int combo;
     private float comboTimer;
     private float comboTimerMax;
@@ -66,7 +68,6 @@ public class PlayScreen extends Screen {
 
     private boolean abilityUsed;
     private float abilityTimer;
-    private final float abilityTimerMax = 5;
     private final TextEntity abilityText;
 
     public PlayScreen(Context context) {
@@ -139,6 +140,8 @@ public class PlayScreen extends Screen {
                 collectibles.add(new Collectible(context, entry.getValue(), x, y));
             }
         }
+
+        context.audio.playMusic("bg", 0.3f, true);
     }
 
     private void collect(Collectible c) {
@@ -149,7 +152,7 @@ public class PlayScreen extends Screen {
         scoreText.setText(score + "");
         c.remove = true;
 
-        if (combo < 10) {
+        if (combo < MAX_COMBO) {
             combo += 1;
             comboText.setText(combo + "x");
         }
@@ -173,14 +176,14 @@ public class PlayScreen extends Screen {
                     }
                 }
             } else if (context.ability == Ability.DOUBLE_DIP) {
-                abilityTimer = 5f;
+                abilityTimer = ABILITY_TIMER_MAX;
             } else if (context.ability == Ability.HEAT_WAVE) {
-                abilityTimer = 5f;
+                abilityTimer = ABILITY_TIMER_MAX;
                 if (combo < 10) {
                     combo = 10;
                     comboText.setText(combo + "x");
                 }
-                comboTimer = comboTimerMax + 5;
+                comboTimer = comboTimerMax + ABILITY_TIMER_MAX;
             }
         }
     }
@@ -338,7 +341,7 @@ public class PlayScreen extends Screen {
             sb.setColor(Constants.BLACK);
             sb.draw(pixel, Constants.WIDTH / 2f - 102, abilityText.y - 7, 204, 16);
             sb.setColor(Constants.PURPLE);
-            sb.draw(pixel, Constants.WIDTH / 2f - 100, abilityText.y - 5, Math.max(200 * abilityTimer / abilityTimerMax, 0), 12);
+            sb.draw(pixel, Constants.WIDTH / 2f - 100, abilityText.y - 5, Math.max(200 * abilityTimer / ABILITY_TIMER_MAX, 0), 12);
             abilityText.render(sb);
         }
 
