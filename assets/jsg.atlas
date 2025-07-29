@@ -4,7 +4,7 @@ repeat:none
 back
 bounds:18,21,39,43
 beachball
-bounds:478,397,26,26
+bounds:478,379,26,26
 chainreaction
 bounds:155,85,39,39
 countdown1
@@ -48,13 +48,15 @@ bounds:18,137,94,28
 summerhours
 bounds:190,167,39,39
 sunglasses
-bounds:478,425,32,11
+bounds:478,407,32,11
 surfsteering
 bounds:155,126,39,39
 title
 bounds:2,323,416,113
+water
+bounds:478,420,32,16
 watermelon
-bounds:478,372,23,23
+bounds:156,60,23,23
 wave
 bounds:386,271,36,34
 whirlpool

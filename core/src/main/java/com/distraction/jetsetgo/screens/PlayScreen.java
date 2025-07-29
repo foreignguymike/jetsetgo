@@ -20,6 +20,7 @@ import com.distraction.jetsetgo.entity.Entity;
 import com.distraction.jetsetgo.entity.Particle;
 import com.distraction.jetsetgo.entity.Player;
 import com.distraction.jetsetgo.entity.TextEntity;
+import com.distraction.jetsetgo.entity.Water;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,6 +70,8 @@ public class PlayScreen extends Screen {
     private boolean abilityUsed;
     private float abilityTimer;
     private final TextEntity abilityText;
+
+    private final Water water;
 
     public PlayScreen(Context context) {
         super(context);
@@ -140,6 +143,8 @@ public class PlayScreen extends Screen {
                 collectibles.add(new Collectible(context, entry.getValue(), x, y));
             }
         }
+
+        water = new Water(context);
 
         context.audio.playMusic("bg", 0.3f, true);
     }
@@ -235,6 +240,10 @@ public class PlayScreen extends Screen {
         in.update(dt);
         out.update(dt);
 
+        water.update(dt);
+        water.x = -cam.position.x;
+        water.y = -cam.position.y;
+
         for (Countdown cd : countdowns) cd.update(dt);
 
         if (state == State.COUNTDOWN) {
@@ -312,6 +321,9 @@ public class PlayScreen extends Screen {
     public void render() {
         Utils.clearScreen(Constants.BLUE);
         sb.begin();
+
+        sb.setProjectionMatrix(uiCam.combined);
+        water.render(sb);
 
         sb.setProjectionMatrix(cam.combined);
         sb.setColor(1, 1, 1, 1);
