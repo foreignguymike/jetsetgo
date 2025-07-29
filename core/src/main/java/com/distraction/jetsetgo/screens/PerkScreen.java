@@ -9,6 +9,7 @@ import com.distraction.jetsetgo.Passive;
 import com.distraction.jetsetgo.Utils;
 import com.distraction.jetsetgo.entity.Button;
 import com.distraction.jetsetgo.entity.TextEntity;
+import com.distraction.jetsetgo.entity.Water;
 
 public class PerkScreen extends Screen {
 
@@ -26,6 +27,8 @@ public class PerkScreen extends Screen {
     private final TextEntity helpText;
     private float helpTimer;
 
+    private final Water water;
+
     public PerkScreen(Context context) {
         super(context);
 
@@ -38,11 +41,11 @@ public class PerkScreen extends Screen {
         titleText.setColor(Constants.WHITE);
 
         abilityText = new TextEntity(context.getFont(Context.VCR20), "Choose 1 ability", Constants.WIDTH / 2f, Constants.HEIGHT - 100, TextEntity.Alignment.CENTER);
-        titleText.setColor(Constants.WHITE);
+        abilityText.setColor(Constants.WHITE);
         abilityIcon = new Button(context.getImage("perk"), Constants.WIDTH / 2f, Constants.HEIGHT - 140);
 
         passiveText = new TextEntity(context.getFont(Context.VCR20), "Choose 2 passives", Constants.WIDTH / 2f, Constants.HEIGHT - 200, TextEntity.Alignment.CENTER);
-        titleText.setColor(Constants.WHITE);
+        passiveText.setColor(Constants.WHITE);
         passive1Icon = new Button(context.getImage("perk"), Constants.WIDTH / 2f - 50, Constants.HEIGHT - 240);
         passive2Icon = new Button(context.getImage("perk"), Constants.WIDTH / 2f + 50, Constants.HEIGHT - 240);
         updateIcons();
@@ -51,6 +54,9 @@ public class PerkScreen extends Screen {
         goButton = new Button(context.getImage("go"), Constants.WIDTH / 2f, 50);
 
         helpText = new TextEntity(context.getFont(Context.M5X716), "Click ->", abilityIcon.x - 30, abilityIcon.y, TextEntity.Alignment.RIGHT);
+
+        water = new Water(context);
+        water.a = 0.06f;
 
         context.audio.playMusic("bg", 0.3f, true);
     }
@@ -107,6 +113,7 @@ public class PerkScreen extends Screen {
             helpTimer += dt;
             helpText.x = abilityIcon.x - 30 + 3 * MathUtils.sin(helpTimer * 6);
         }
+        water.update(dt);
     }
 
     @Override
@@ -114,6 +121,7 @@ public class PerkScreen extends Screen {
         Utils.clearScreen(Constants.DARK_BLUE);
         sb.begin();
         sb.setProjectionMatrix(uiCam.combined);
+        water.render(sb);
         titleText.render(sb);
         abilityText.render(sb);
         passiveText.render(sb);

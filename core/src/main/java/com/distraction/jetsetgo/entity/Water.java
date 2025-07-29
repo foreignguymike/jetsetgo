@@ -29,8 +29,6 @@ public class Water extends Entity {
     @Override
     public void render(SpriteBatch sb) {
         sb.setColor(1, 1, 1, a);
-//        float startx = (x * SIZE) / SIZE - Constants.WIDTH / 2f;
-//        float starty = (y * SIZE) / SIZE - Constants.HEIGHT / 2f;
         float startx = x % SIZE - SIZE;
         float starty = y % SIZE - SIZE;
         for (int row = 0; row < numRows; row++) {
