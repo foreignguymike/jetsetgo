@@ -14,7 +14,7 @@ public class Constants {
 
     public static final boolean FULLSCREEN = false;
 
-    public static final String VERSION = "v0.0.1";
+    public static final String VERSION = "v1.0.0";
 
     // PICO-8 (https://www.lexaloffle.com/pico-8.php)
     // Palette from lospec. https://lospec.com/palette-list/pico-8
